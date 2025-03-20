@@ -1,6 +1,6 @@
 # Journal
 
-Sprint Planning (Date: 3/6/25, Time: 9:00 am):
+## Sprint Planning (Date: 3/6/25, Time: 9:00 am):
 
 Team members present (In-Person):
 Joey Zamiski, Manal Asad, and Mai Bridge
@@ -11,7 +11,7 @@ were also talked about. Creating a basic UI and being able to upload data from f
 moved from the product backlog to the sprint backlog. The use of a SQL database in the backend was also proposed.
 The expected format of input data is yet to be determined.
 
-Daily Scrum (Date: 3/11/25)
+# Daily Scrum (Date: 3/11/25)
 
 Team members present (In-Person):
 Manal Asad, Mai Bridge, and Joey Zamiski
@@ -20,7 +20,7 @@ Topics discussed:
 We discussed where we were at with respect to learning JavaFX. Mai provided a base UI (in JavaFX) 
 for everyone to work with. Mai also provide a tutorial for setting up JavaFX with IntelliJ.
 
-Daily Scrum (3/13/25)
+# Daily Scrum (3/13/25)
 
 Team members present (In-Person):
 Mai Bridge, Manal Asad, Tashneet Kaur, and Joey Zamiski
@@ -29,6 +29,28 @@ Topics discussed:
 We discussed modifying the base UI. Specifically, we wanted to add the capability for file upload.
 The plan is to add the file upload in a new scene. The other team members focusing on front end can then modify
 the scene to their liking.
+
+# Daily Scrum (3/18/25)
+
+Team members present (In-Person):
+Mai Bridge, Manal Asad, Tashneet Kaur, and Joey Zamiski
+
+Topics discussed:
+We discussed and re-defined the package diagram for our system align with Client-Server model. Defined key packages for
+client-server and the server-side. Working on indentifying dependencies between client and server components.
+
+# Daily Scrum (3/20/25)
+
+Team members present (In-Person):
+Mai Bridge, Manal Asad, Tashneet Kaur, and Joey Zamiski
+
+Topics discussed:
+we discussed the structure of our package diagram ensuring clear seperation of concerns between layers. 
+Also, worked on the dependencies ensuring that they follow the correct flow.
+ 
+
+
+
 
 
 
