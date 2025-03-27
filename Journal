@@ -45,8 +45,18 @@ Team members present (In-Person):
 Mai Bridge, Manal Asad, Tashneet Kaur, and Joey Zamiski
 
 Topics discussed:
-we discussed the structure of our package diagram ensuring clear seperation of concerns between layers. 
+We discussed the structure of our package diagram ensuring clear seperation of concerns between layers. 
 Also, worked on the dependencies ensuring that they follow the correct flow.
+
+# Daily Scrum (3/27/25)
+
+Team members present (In-Person):
+Joey Zamiski, Manal Asad, and Mai Bridge
+
+Topics discussed:
+We discussed issues regarding UI design. Specifically, we talked about different kinds of pages that
+were required for our budgeting application. The expected format of input data and database integration
+were other topics mentioned.
  
 
 
