@@ -1,0 +1,49 @@
+<?xml version="1.0" encoding="UTF-8"?>
+
+<?import javafx.geometry.*?>
+<?import javafx.scene.control.*?>
+<?import javafx.scene.layout.*?>
+
+<BorderPane fx:id="rootPane" stylesheets="@/css/design.css" xmlns="http://javafx.com/javafx/11.0.14-internal" xmlns:fx="http://javafx.com/fxml/1" fx:controller="org.project.controllers.DashboardController">
+
+    <!--Menu bar, maybe move the Logout button to settings?-->
+    <top>
+            <MenuBar>
+                <Menu text="File">
+                    <MenuItem text = "Export Report" />
+                    <MenuItem text = "Logout?" onAction = "#handleLogout"/>
+                </Menu>
+                <Menu text = "Help">
+                    <MenuItem text = "About" onAction = "#handleAbout"/>
+                </Menu>
+            </MenuBar>
+
+    </top>
+
+    <!-- Currently the dashboard. These are tabs of the dashbaord. It needs to be its own window -->
+    <center>
+        <TabPane tabClosingPolicy="UNAVAILABLE">
+            <tabs>
+                <Tab text="Manage Transactions">
+                    <content>
+                        <fx:include fx:id="transactionsTab" source="transactions.fxml" />
+                    </content>
+                </Tab>
+
+                <Tab text="Reports">
+                    <content>
+                        <fx:include fx:id="reportsTab" source="reports.fxml" />
+                    </content>
+                </Tab>
+            </tabs>
+        </TabPane>
+    </center>
+
+    <bottom>
+        <HBox alignment="CENTER_RIGHT" prefHeight="25.0" prefWidth="662.0" spacing="10" style="-fx-background-color: #E3E2DD;">
+            <padding>
+                <Insets bottom="5" left="5" right="5" top="5" />
+            </padding>
+        </HBox>
+    </bottom>
+</BorderPane>

@@ -1,0 +1,55 @@
+/*login designs*/
+.login-button {
+    -fx-background-color: #B0D699;
+    -fx-text-fill: black;
+    -fx-cursor: hand;
+}
+
+.login-button:hover {
+    -fx-background-color: #A5CE8C;
+}
+
+.login-button:pressed {
+    -fx-background-color: #93B97C;
+}
+
+.gradient-pane { /*remove after discussing theme  */
+    -fx-background-color:linear-gradient(to top left, #A3EC4B 10%, #E2D86B 30%, #E09525 100%);
+}
+
+/*button business on mangage tranascts*/
+.button-on-action {
+    -fx-background-color: #F4CE62;
+    -fx-text-fill: black;
+    -fx-font-weight: bold;
+    -fx-padding: 8 15;
+    -fx-cursor: hand;
+}
+
+.button-on-action:hover {
+    -fx-background-color: #E7B938;
+}
+
+.button-on-action:pressed {
+    -fx-background-color: #E0B02A;
+}
+
+/* designs for table (again, change later after dicussing overall layout */
+.table-view {
+    -fx-base: #f5f5f5;
+    -fx-control-inner-background: #ffffff;
+    -fx-table-cell-border-color: transparent;
+    -fx-table-header-border-color: transparent;
+}
+
+.table-view .column-header-background {
+    -fx-background-color: #D6D4CF;
+}
+
+.table-view .column-header,
+.table-view .filler {
+    -fx-background-color: transparent;
+    -fx-size: 35;
+    -fx-border-width: 0 0 1 0;
+    -fx-border-color: transparent transparent derive(-fx-base, 80%) transparent;
+}

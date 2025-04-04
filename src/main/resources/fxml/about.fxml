@@ -1,0 +1,25 @@
+<?xml version="1.0" encoding="UTF-8"?>
+
+<?import javafx.scene.control.*?>
+<?import javafx.scene.layout.*?>
+
+<VBox prefHeight="321.0" prefWidth="290.0" spacing="10" style="-fx-padding: 20; -fx-alignment: CENTER_LEFT;" stylesheets="@/css/design.css" xmlns="http://javafx.com/javafx/11.0.14-internal" xmlns:fx="http://javafx.com/fxml/1">
+
+    <Label style="-fx-font-size: 20; -fx-font-weight: bold;" text="BudgetBuddy" />
+    <Label text="Version 1.0.0" />
+    <Separator />
+
+    <!--Credits!!! -->
+    <Label style="-fx-font-weight: bold;" text="Developed by:" />
+
+    <VBox>
+        <Label text="- Manal Asad" />
+        <Label text="- Mai Bridge&#9;-&#9;UI Designer" />
+        <Label text="- Tashneet Kaur" />
+        <Label text="- Joey Zamiski" />
+    </VBox>
+
+    <Separator />
+    <Label style="-fx-font-weight: bold;" text="Powered by:" />
+    <Label text="- JavaFX" />
+</VBox>
