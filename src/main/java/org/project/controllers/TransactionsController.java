@@ -93,6 +93,7 @@ public class TransactionsController implements Initializable {
                     customtransactType.getText()
             );
 
+
             transactionData.add(newTransaction);
             clearManualEntryFields();
 
