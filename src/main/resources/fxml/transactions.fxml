@@ -1,61 +1,20 @@
-<?xml version="1.0" encoding="UTF-8"?>
-
-<?import javafx.geometry.*?>
-<?import javafx.scene.control.*?>
+<!-- notifications.fxml -->
 <?import javafx.scene.layout.*?>
+<?import javafx.scene.control.*?>
 
-<VBox spacing="20" style="-fx-background-color: #f5f5f5;" xmlns="http://javafx.com/javafx/11.0.14-internal" xmlns:fx="http://javafx.com/fxml/1" fx:controller="org.project.controllers.TransactionsController">
-    <padding>
-        <Insets bottom="20" left="20" right="20" top="20" />
-    </padding>
+<VBox fx:id="notificationPanel" style="-fx-background-color: #f8f9fa; -fx-border-color: #dee2e6; -fx-border-width: 0 0 0 1;"
+      xmlns="http://javafx.com/javafx/8" xmlns:fx="http://javafx.com/fxml/1"
+      fx:controller="org.project.controllers.NotificationController">
 
-    <!--button to upload file!-->
-    <HBox alignment="CENTER_LEFT" spacing="20">
-        <Label style="-fx-font-weight: bold;" text="Upload Transactions:" />
-        <Button onAction="#handleFileUpload" styleClass="button-on-action" text="Choose File" />
-        <Label fx:id="fileStatusLabel" /> <!--implement when backend-->
+    <!--jheader,need to replace values for design.css-->
+    <HBox style="-fx-background-color: #343a40; -fx-padding: 10;" alignment="CENTER_LEFT">
+        <Label text="Notifications" style="-fx-text-fill: white; -fx-font-weight: bold;"/>
+        <Region HBox.hgrow="ALWAYS"/>
+        <Button style="-fx-background-color: transparent; -fx-text-fill: white;" text="✕" onAction="#closePanel"/>
     </HBox>
 
-    <!--table-->
-    <TableView fx:id="transactionsTable" prefHeight="221.0" prefWidth="463.0">
-        <columns>
-            <TableColumn fx:id="dateColumn" prefWidth="100" text="Date" />
-            <TableColumn fx:id="transactTypeColumn" prefWidth="292.40000915527344" text="Transaction Type" />
-            <TableColumn fx:id="amountColumn" prefWidth="67.5999755859375" text="Amount" />
-        </columns>
-    </TableView>
-
-    <!--Manual Entry field-->
-    <HBox alignment="CENTER_LEFT" spacing="10">
-        <VBox minWidth="120" spacing="5">
-            <Label text="Date" />
-            <DatePicker fx:id="dateField" prefHeight="26.0" prefWidth="116.0" />
-        </VBox>
-
-        <VBox spacing="5">
-            <Label text="Category" />
-            <HBox alignment="CENTER_LEFT" spacing="5">
-                <ComboBox fx:id="transactTypeField" onAction="#handleCategorySelection" prefWidth="120" />
-                <!--disappear manual transaction text field-->
-                <TextField fx:id="customtransactType" managed="false" prefWidth="150" promptText="Specify category" visible="false" />
-            </HBox>
-        </VBox>
-
-        <VBox minWidth="100" spacing="5">
-            <Label text="Amount" />
-            <TextField fx:id="amountField" prefHeight="26.0" prefWidth="41.0" />
-        </VBox>
-
-        <VBox alignment="BOTTOM_LEFT" spacing="5">
-            <HBox spacing="10">
-                <Button onAction="#handleAddTransaction" styleClass="button-on-action" text="Add" />
-                <Button onAction="#handleClearFields" styleClass="button-on-action" text="Clear" />
-            </HBox>
-        </VBox>
-    </HBox>
-    
-    <HBox alignment="CENTER_RIGHT" spacing="20">
-        <Button onAction="#handleSaveChanges" styleClass="button-on-action" text="Save Changes" />
-        <Button onAction="#handleDelete" styleClass="button-on-action" text="Delete" />
-    </HBox>
+    <!-- Prepared the notification body -->
+    <ScrollPane fitToWidth="true" style="-fx-background: transparent; -fx-background-color: transparent;">
+        <VBox fx:id="notificationContents" style="-fx-padding: 10;" spacing="5"/>
+    </ScrollPane>
 </VBox>
