@@ -1,0 +1,56 @@
+<?xml version="1.0" encoding="UTF-8"?>
+
+<?import javafx.geometry.*?>
+<?import javafx.scene.control.*?>
+<?import javafx.scene.image.*?>
+<?import javafx.scene.layout.*?>
+
+<BorderPane fx:id="rootPane" stylesheets="@/css/design.css" xmlns="http://javafx.com/javafx/11.0.14-internal" xmlns:fx="http://javafx.com/fxml/1" fx:controller="org.project.controllers.HomeController">
+
+    <top>
+        <MenuBar>
+            <Menu text="File">
+                <MenuItem text="Export Report" />
+                <MenuItem onAction="#handleLogout" text="Logout?" />
+            </Menu>
+            <Menu text="Settings" />
+            <Menu text="Help">
+                <MenuItem onAction="#handleAbout" text="About" />
+            </Menu>
+        </MenuBar>
+    </top>
+
+    <left>
+        <VBox fx:id="sidebar" minWidth="50" prefWidth="50" styleClass="sidebar">
+            <Button fx:id="menuButton" onAction="#openSidebar" styleClass="menuButton" text="☰" />
+
+            <VBox fx:id="sidebarContent" managed="false" spacing="10" visible="false">
+                <Button fx:id="dashboardNavBtn" maxWidth="Infinity" onAction="#showDashboard" styleClass="nav-button" text="Dashboard" />
+                <Button fx:id="transactionsNavBtn" maxWidth="Infinity" onAction="#showTransactions" styleClass="nav-button" text="Transactions" />
+                <Button fx:id="reportsNavBtn" maxWidth="Infinity" onAction="#showReports" styleClass="nav-button" text="Reports" />
+            </VBox>
+        </VBox>
+    </left>
+
+    <center>
+        <StackPane fx:id="contentPane">
+            <fx:include fx:id="dashboardContent" source="dashboard.fxml" />
+        </StackPane>
+    </center>
+
+    <right>
+        <StackPane alignment="TOP_CENTER">
+            <VBox fx:id="notificationSidebar" managed="false" visible="false" styleClass="notification-sidebar" />
+
+            <Button fx:id="notificationBtn" onAction="#openNotificationSidebar" styleClass="notification-button">
+                <graphic>
+                    <StackPane />
+                </graphic>
+            </Button>
+
+            <ImageView fitHeight="24" fitWidth="24" pickOnBounds="true" preserveRatio="true">
+                <Image url="@/images/mailbox.jpg" /> <!-- placeholder image -->
+            </ImageView>
+        </StackPane>
+    </right>
+</BorderPane>
