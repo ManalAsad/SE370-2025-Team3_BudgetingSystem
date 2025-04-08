@@ -1,0 +1,20 @@
+<!-- notifications.fxml -->
+<?import javafx.scene.layout.*?>
+<?import javafx.scene.control.*?>
+
+<VBox fx:id="notificationPanel" style="-fx-background-color: #f8f9fa; -fx-border-color: #dee2e6; -fx-border-width: 0 0 0 1;"
+      xmlns="http://javafx.com/javafx/8" xmlns:fx="http://javafx.com/fxml/1"
+      fx:controller="org.project.controllers.NotificationController">
+
+    <!--jheader,need to replace values for design.css-->
+    <HBox style="-fx-background-color: #343a40; -fx-padding: 10;" alignment="CENTER_LEFT">
+        <Label text="Notifications" style="-fx-text-fill: white; -fx-font-weight: bold;"/>
+        <Region HBox.hgrow="ALWAYS"/>
+        <Button style="-fx-background-color: transparent; -fx-text-fill: white;" text="✕" onAction="#closePanel"/>
+    </HBox>
+
+    <!-- Prepared the notification body -->
+    <ScrollPane fitToWidth="true" style="-fx-background: transparent; -fx-background-color: transparent;">
+        <VBox fx:id="notificationContents" style="-fx-padding: 10;" spacing="5"/>
+    </ScrollPane>
+</VBox>
