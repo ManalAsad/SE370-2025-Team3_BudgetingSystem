@@ -1,33 +1,20 @@
-<?xml version="1.0" encoding="UTF-8"?> <!-- All this tab does currently is open display dropdown menus!-->
-
-<?import java.lang.*?>
-<?import javafx.collections.*?>
-<?import javafx.geometry.*?>
-<?import javafx.scene.control.*?>
+<!-- notifications.fxml -->
 <?import javafx.scene.layout.*?>
+<?import javafx.scene.control.*?>
 
-<VBox spacing="20" style="-fx-padding: 20;" xmlns="http://javafx.com/javafx/11.0.14-internal" xmlns:fx="http://javafx.com/fxml/1" fx:controller="org.project.controllers.ReportsController">
+<VBox fx:id="notificationPanel" style="-fx-background-color: #f8f9fa; -fx-border-color: #dee2e6; -fx-border-width: 0 0 0 1;"
+      xmlns="http://javafx.com/javafx/8" xmlns:fx="http://javafx.com/fxml/1"
+      fx:controller="org.project.controllers.NotificationController">
 
-    <Label style="-fx-font-size: 18px; -fx-font-weight: bold;" text="Reports" />
-
-    <HBox alignment="CENTER_LEFT" spacing="20">
-        <ComboBox fx:id="timePeriodCombo" promptText="Reports based on date">
-            <items>
-                <FXCollections fx:factory="observableArrayList">
-                    <String fx:value="Past Day" />
-                    <String fx:value="Past Week" />
-                    <String fx:value="Past Month" />
-                </FXCollections>
-            </items>
-        </ComboBox>
-      <ComboBox prefWidth="150.0" promptText="Type of Chart" />
+    <!--jheader,need to replace values for design.css-->
+    <HBox style="-fx-background-color: #343a40; -fx-padding: 10;" alignment="CENTER_LEFT">
+        <Label text="Notifications" style="-fx-text-fill: white; -fx-font-weight: bold;"/>
+        <Region HBox.hgrow="ALWAYS"/>
+        <Button style="-fx-background-color: transparent; -fx-text-fill: white;" text="✕" onAction="#closePanel"/>
     </HBox>
 
-    <StackPane fx:id="reportContainer" style="-fx-border-color: #ddd; -fx-border-width: 1;">
-        <padding>
-            <Insets bottom="20" left="20" right="20" top="20" />
-        </padding>
-        <Label text="Figure out here what the reports generation will look like
-    Not sure if it should be a check box or something" />
-    </StackPane>
+    <!-- Prepared the notification body -->
+    <ScrollPane fitToWidth="true" style="-fx-background: transparent; -fx-background-color: transparent;">
+        <VBox fx:id="notificationContents" style="-fx-padding: 10;" spacing="5"/>
+    </ScrollPane>
 </VBox>
