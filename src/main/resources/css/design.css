@@ -1,7 +1,8 @@
-/*login designs*/
+/* login designs */
 .login-button {
     -fx-background-color: #B0D699;
     -fx-text-fill: black;
+    padding: 15px;
     -fx-cursor: hand;
 }
 
@@ -13,43 +14,58 @@
     -fx-background-color: #93B97C;
 }
 
-.gradient-pane { /*remove after discussing theme  */
-    -fx-background-color:linear-gradient(to top left, #A3EC4B 10%, #E2D86B 30%, #E09525 100%);
+.gradient-pane { /* remove after discussing theme */
+    -fx-background-color: linear-gradient(to top left, #A3EC4B 10%, #E2D86B 30%, #E09525 100%);
 }
 
-/*button business on mangage tranascts*/
-.button-on-action {
-    -fx-background-color: #F4CE62;
-    -fx-text-fill: black;
-    -fx-font-weight: bold;
-    -fx-padding: 8 15;
-    -fx-cursor: hand;
-}
+/* HOMW WINDOW*/
 
-.button-on-action:hover {
-    -fx-background-color: #E7B938;
-}
+ .sidebar {
+     -fx-background-color: #EBCA6D;
+     -fx-spacing: 10;
+ }
 
-.button-on-action:pressed {
-    -fx-background-color: #E0B02A;
-}
+ .menuButton {
+     -fx-background-color: transparent;
+     -fx-text-fill: white;
+     -fx-font-size: 20px;
+     -fx-padding: 15;
+     -fx-cursor: hand;
+ }
 
-/* designs for table (again, change later after dicussing overall layout */
-.table-view {
-    -fx-base: #f5f5f5;
-    -fx-control-inner-background: #ffffff;
-    -fx-table-cell-border-color: transparent;
-    -fx-table-header-border-color: transparent;
-}
+ .menuButton:hover {
+     -fx-background-color: #DFB950;
+ }
 
-.table-view .column-header-background {
-    -fx-background-color: #D6D4CF;
-}
+ /* Navigation buttons in sidebar */
+ .nav-button {
+     -fx-background-color: transparent;
+     -fx-text-fill: white;
+     -fx-font-size: 14px;
+     -fx-alignment: center-left;
+     -fx-padding: 10 15;
+     -fx-cursor: hand;
+ }
 
-.table-view .column-header,
-.table-view .filler {
-    -fx-background-color: transparent;
-    -fx-size: 35;
-    -fx-border-width: 0 0 1 0;
-    -fx-border-color: transparent transparent derive(-fx-base, 80%) transparent;
-}
+ .nav-button:hover {
+     -fx-background-color: #C1D84B;
+ }
+
+ .active-nav-button {
+     -fx-background-color: #B0C83B;
+     -fx-font-weight: bold;
+ }
+
+ /* Notification area */
+ .notification-sidebar {
+     -fx-background-color: #F5ECD3;
+     -fx-spacing: 10;
+     -fx-padding: 10;
+ }
+
+ .notification-button {
+     -fx-background-color: transparent;
+     -fx-padding: 15;
+     -fx-cursor: hand;
+ }
+
