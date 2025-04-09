@@ -6,25 +6,24 @@ import javafx.beans.property.*;
 import java.time.LocalDate;
 
 public class Budget {
-    private final IntegerProperty budgetId = new SimpleIntegerProperty();
-    private final IntegerProperty userId = new SimpleIntegerProperty();
-    private final StringProperty category = new SimpleStringProperty();
-    private final DoubleProperty amount = new SimpleDoubleProperty();
-    private final ObjectProperty<LocalDate> startDate = new SimpleObjectProperty<>();
-    private final ObjectProperty<LocalDate> endDate = new SimpleObjectProperty<>();
+    private final IntegerProperty budgetId = new SimpleIntegerProperty();     //Primary key
+    private final IntegerProperty userId = new SimpleIntegerProperty();        // foreign key : links to the user who owns this budget
+    private final StringProperty category = new SimpleStringProperty();         // like "food", "rent", etc
+    private final DoubleProperty amount = new SimpleDoubleProperty();           // the budget amount for this category
+    private final ObjectProperty<LocalDate> startDate = new SimpleObjectProperty<>();   //start of budget period
+    private final ObjectProperty<LocalDate> endDate = new SimpleObjectProperty<>();     //end of budget period
 
-    // Constructors
+    // Constructors (with all fields), default values
     public Budget() {
         this(-1, -1, "", 0.0, LocalDate.now(), LocalDate.now().plusMonths(1));
     }
 
-    public Budget(int userId, String category, double amount, 
-                LocalDate startDate, LocalDate endDate) {
+    //constructors (without ID for when you are saving/creating  a new budget)
+    public Budget(int userId, String category, double amount, LocalDate startDate, LocalDate endDate) {
         this(-1, userId, category, amount, startDate, endDate);
     }
 
-    public Budget(int budgetId, int userId, String category, 
-                double amount, LocalDate startDate, LocalDate endDate) {
+    public Budget(int budgetId, int userId, String category, double amount, LocalDate startDate, LocalDate endDate) {
         setBudgetId(budgetId);
         setUserId(userId);
         setCategory(category);
@@ -57,12 +56,13 @@ public class Budget {
     public void setStartDate(LocalDate date) { startDate.set(date); }
     public void setEndDate(LocalDate date) { endDate.set(date); }
 
-    // Helper methods
+    // Helper methods( checks if the budget is currently active by comparing the current date with the budget's start and end dates)
     public boolean isActive() {
         LocalDate today = LocalDate.now();
         return !today.isBefore(getStartDate()) && !today.isAfter(getEndDate());
     }
 
+    //provides a string representation of the budget
     @Override
     public String toString() {
         return String.format("Budget[id=%d, user=%d, category=%s, amount=%.2f, period=%s to %s]",

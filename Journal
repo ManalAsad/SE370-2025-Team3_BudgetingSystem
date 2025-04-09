@@ -1,4 +1,4 @@
-# Journal
+## Journal
 
 ## Sprint Planning (Date: 3/6/25, Time: 9:00 am):
 
@@ -58,6 +58,27 @@ We discussed issues regarding UI design. Specifically, we talked about different
 were required for our budgeting application. The expected format of input data and database integration
 were other topics mentioned.
  
+# Dialy Scrum (4/3/2025)
+
+Team members present (Virtual-meeting):
+Joey Zamiski, Manal Asad, and Mai Bridge
+
+Topics Discussed:
+We discussed the file structures to improve the organization of our code and identified the Model-View-Controller (MVC) pattern for the system. 
+We also talked about how graphics will handle transactions and generate reports based on user preferences. 
+Additionally, we worked on creating mock data to enhance our understanding of the system. Finally, we reviewed the database
+schema and its relationship with user transactions and storage.
+
+# Dialy Scrum (4/8/2025)
+
+Team members present (In-Person):
+Joey Zamiski, Manal Asad, and Mai Bridge
+
+Topics Discussed:
+Each team member shared an overview of their work. We talked about the progress we have made so far. 
+We discussed the size of the graphs and which data is most important to keep in the database. We refined 
+some of our requirements and focused on the essential ones. We also talked about how the user interface should
+look and what tabs we need to include.
 
 
 

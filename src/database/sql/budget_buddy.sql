@@ -16,7 +16,7 @@ create table users (
     username varchar(100) not null,
     email varchar(100) not null unique,
     password varchar(255) not null
-); 												                                    //stores user login details 
+); 												   /*stores user login details*/
 
 create table transactions (
 	transaction_id int auto_increment primary key,
@@ -24,10 +24,10 @@ create table transactions (
     amount decimal(10,2) not null,
     category varchar(50) not null,
     transaction_date date not null,
-    description text,
+    /*description text,*/
     source varchar(50),
     foreign key(user_id) references users(user_id) on delete cascade
-);									                                                 //stores transactions uploaded by users from csv
+);									           /*stores transactions uploaded by users from csv*/
 
 create table budgets (
 	budget_id int auto_increment primary key,
@@ -37,18 +37,18 @@ create table budgets (
     start_date date not null,
     end_date date not null,
     foreign key(user_id) references users(user_id) on delete cascade
-); 								                                                    //stores the users budget limits per category/ represents how much a user plan to spend per category within a specific time period
+); /*stores the users budget limits per category/ represents how much a user plan to spend per category within a specific time period*/
 
-create table goals (
+/*create table goals (
 	goal_id int auto_increment primary key,
     user_id int,
     goal_name varchar(100) not null,
     target_amount decimal(10,2) not null,
     saved_amount decimal(10,2) default 0,
     foreign key (user_id) references users(user_id) on delete cascade
-); 							                                                        //represent how much a user wants to save for a specific purpose
+); 				/*represent how much a user wants to save for a specific purpose*/*/
 
-create table report_settings(
+/*create table report_settings(
 	setting_id int auto_increment primary key,
     user_id int,
     report_type enum('daily', 'weekly', 'monthly') not null,
@@ -56,4 +56,4 @@ create table report_settings(
     end_date date,
     chart_type enum('piechart','barchart') not null,
     foreign key(user_id) references users(user_id) on delete cascade
-);                                                                                  //stores user preferences for reports
+);        /*stores user preferences for reports*/ */
