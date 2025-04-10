@@ -61,6 +61,8 @@ public class ReportsController {
         // using hard-coded values right now to make
         // sure that the pie chart is displayed correctly
         // Note: The integer values for the pie chart do not represent percentages
+        // They represent the category count. The count was computed from other
+        // code that will be added in the next iteration (reading data from a csv file)
         chartData.add(new PieChart.Data("Restaurants & Dining", 36));
         chartData.add(new PieChart.Data("Transportation", 9));
         chartData.add(new PieChart.Data("Health", 4));
@@ -103,6 +105,9 @@ public class ReportsController {
         // adding the data for the bar chart
         // using hard-coded values right now to make
         // sure that the bar chart is displayed correctly
+        // Note: The integer values for the bar chart are the average amount
+        // spent for a particular month. The averages were computed from other
+        // code that will be added in the next iteration (reading data from a csv file)
         series.getData().add(new XYChart.Data<>("January", 84));
         series.getData().add(new XYChart.Data<>("February", 107));
         series.getData().add(new XYChart.Data<>("March", 58));
