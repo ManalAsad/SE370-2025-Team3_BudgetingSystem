@@ -1,20 +1,57 @@
-<!-- notifications.fxml -->
-<?import javafx.scene.layout.*?>
+<?xml version="1.0" encoding="UTF-8"?>
+
 <?import javafx.scene.control.*?>
+<?import javafx.scene.layout.*?>
 
-<VBox fx:id="notificationPanel" style="-fx-background-color: #f8f9fa; -fx-border-color: #dee2e6; -fx-border-width: 0 0 0 1;"
-      xmlns="http://javafx.com/javafx/8" xmlns:fx="http://javafx.com/fxml/1"
-      fx:controller="org.project.controllers.NotificationController">
+<VBox spacing="10" style="-fx-padding: 15;" xmlns="http://javafx.com/javafx/11.0.14-internal" xmlns:fx="http://javafx.com/fxml/1" fx:controller="org.project.controllers.TransactionsController">
 
-    <!--jheader,need to replace values for design.css-->
-    <HBox style="-fx-background-color: #343a40; -fx-padding: 10;" alignment="CENTER_LEFT">
-        <Label text="Notifications" style="-fx-text-fill: white; -fx-font-weight: bold;"/>
-        <Region HBox.hgrow="ALWAYS"/>
-        <Button style="-fx-background-color: transparent; -fx-text-fill: white;" text="✕" onAction="#closePanel"/>
+    <HBox alignment="CENTER_LEFT" spacing="10">
+        <Label style="-fx-font-weight: bold;" text="Upload Transactions:" />
+        <Button fx:id="processFileBtn" onAction="#handleFileUpload" text="Select File" />
+        <Label fx:id="fileStatus" style="-fx-text-fill: #666;" />
     </HBox>
 
-    <!-- Prepared the notification body -->
-    <ScrollPane fitToWidth="true" style="-fx-background: transparent; -fx-background-color: transparent;">
-        <VBox fx:id="notificationContents" style="-fx-padding: 10;" spacing="5"/>
-    </ScrollPane>
+    <Separator />
+
+    <Label style="-fx-font-weight: bold;" text="Add Manual Transaction:" />
+    <GridPane hgap="10" vgap="10">
+        <columnConstraints>
+            <ColumnConstraints halignment="RIGHT" hgrow="NEVER" />
+            <ColumnConstraints hgrow="NEVER" />
+        </columnConstraints>
+
+        <Label text="Date:" GridPane.columnIndex="0" GridPane.rowIndex="0" />
+        <DatePicker fx:id="dateField" GridPane.columnIndex="1" GridPane.rowIndex="0" />
+
+        <Label text="Amount:" GridPane.columnIndex="0" GridPane.rowIndex="1" />
+        <TextField fx:id="amountField" prefHeight="26.0" prefWidth="35.0" GridPane.columnIndex="1" GridPane.rowIndex="1" />
+
+        <Label text="Category:" GridPane.columnIndex="0" GridPane.rowIndex="2" />
+        <HBox spacing="5" GridPane.columnIndex="1" GridPane.rowIndex="2">
+            <ComboBox fx:id="transactTypeField" prefWidth="200" />
+            <TextField fx:id="customtransactType" prefWidth="150" promptText="Custom category" />
+        </HBox>
+
+        <HBox spacing="10" GridPane.columnIndex="1" GridPane.rowIndex="3">
+            <Button onAction="#handleAddTransaction" text="Add" />
+            <Button onAction="#handleClearFields" text="Clear" />
+        </HBox>
+
+      <rowConstraints>
+         <RowConstraints />
+         <RowConstraints />
+         <RowConstraints />
+         <RowConstraints />
+      </rowConstraints>
+    </GridPane>
+
+    <Separator />
+
+    <HBox alignment="CENTER_LEFT" spacing="10">
+        <Label style="-fx-font-weight: bold;" text="Transaction List:" />
+        <Button fx:id="deleteSelectedBtn" disable="true" onAction="#handleDeleteSelected" text="Delete Selected" />
+        <Button onAction="#handleSaveChanges" text="Save All" />
+    </HBox>
+
+    <ListView fx:id="transactionsListView" VBox.vgrow="ALWAYS" />
 </VBox>
