@@ -25,7 +25,7 @@ create table transactions (
     category varchar(50) not null,
     transaction_date date not null,
     /*description text,*/
-    source varchar(50),
+    /*source varchar(50),*/
     foreign key(user_id) references users(user_id) on delete cascade
 );									           /*stores transactions uploaded by users from csv*/
 

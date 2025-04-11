@@ -28,6 +28,7 @@ public class jdbcBudgetRepository implements BudgetRepository {
         try (PreparedStatement stmt = connection.prepareStatement(sql, Statement.RETURN_GENERATED_KEYS)) {
 
             // set parameters for the save statements
+            //stmt.setInt(1, budget.getBudgetId());
             stmt.setInt(1, budget.getUserId());
             stmt.setString(2, budget.getCategory());
             stmt.setDouble(3, budget.getAmount());

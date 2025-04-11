@@ -17,8 +17,7 @@ public class jdbcTransactionRepository implements TransactionRepository {
 
     @Override
     public Transaction save(Transaction transaction) throws SQLException {
-        String sql = "INSERT INTO transactions (user_id, amount, category, transaction_date, description, source) " +
-                     "VALUES (?, ?, ?, ?, ?, ?)";
+        String sql = "INSERT INTO transactions (user_id, amount, category, transaction_date, description, source) " + "VALUES (?, ?, ?, ?, ?, ?)";
         
         try (PreparedStatement stmt = connection.prepareStatement(sql, Statement.RETURN_GENERATED_KEYS)) {
             stmt.setInt(1, transaction.getUserId());

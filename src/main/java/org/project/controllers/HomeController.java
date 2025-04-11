@@ -13,7 +13,7 @@ import java.net.URL;
 import java.util.ResourceBundle;
 
 
-public class TransactionsController implements Initializable {
+public class HomeController implements Initializable {
 
     @FXML private ListView<Transaction> transactionsListView;
     @FXML private DatePicker dateField;
