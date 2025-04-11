@@ -27,6 +27,7 @@ public class MockDataInserter {
             // Create a new budget object
             Budget mockBudget = new Budget(1, "Food", 500.0, LocalDate.of(2025, 4, 1), LocalDate.of(2025, 4, 30));
             Budget mockBudget_2 = new Budget(4,"shopping",700.0,LocalDate.of(2025, 4, 1), LocalDate.of(2025, 4, 30));
+            
             // Save the budget to the database
             Budget savedBudget = repository.save(mockBudget);
             Budget savedBudget_2 = repository.save(mockBudget_2);

@@ -17,15 +17,15 @@ public class jdbcTransactionRepository implements TransactionRepository {
 
     @Override
     public Transaction save(Transaction transaction) throws SQLException {
-        String sql = "INSERT INTO transactions (user_id, amount, category, transaction_date, description, source) " + "VALUES (?, ?, ?, ?, ?, ?)";
+        String sql = "INSERT INTO transactions (user_id, amount, category, transaction_date) " + "VALUES (?, ?, ?, ?)";
         
         try (PreparedStatement stmt = connection.prepareStatement(sql, Statement.RETURN_GENERATED_KEYS)) {
             stmt.setInt(1, transaction.getUserId());
             stmt.setBigDecimal(2, BigDecimal.valueOf(transaction.getAmount()));
             stmt.setString(3, transaction.getCategory());
             stmt.setDate(4, Date.valueOf(transaction.getDate()));
-            stmt.setString(5, transaction.getDescription());
-            stmt.setString(6, transaction.getSource());
+            //stmt.setString(5, transaction.getDescription());
+            //stmt.setString(6, transaction.getSource());
             
             stmt.executeUpdate();
             
@@ -91,41 +91,76 @@ public class jdbcTransactionRepository implements TransactionRepository {
                 rs.getInt("user_id"),
                 rs.getDate("transaction_date").toLocalDate(),
                 rs.getDouble("amount"),
-                rs.getString("category"),
-                rs.getString("description"),
-                rs.getString("source")
+                rs.getString("category")
+                //rs.getString("description"),
+                //rs.getString("source")
             ));
         }
         return transactions;
     }
 
     @Override
-    public Optional<Transaction> findById(Integer id) throws Exception {
-        // TODO Auto-generated method stub
-        throw new UnsupportedOperationException("Unimplemented method 'findById'");
+    public Optional<Transaction> findById(Integer id) throws SQLException {
+        String sql = "SELECT * FROM transactions WHERE transaction_id = ?";
+        try (PreparedStatement stmt = connection.prepareStatement(sql)) {
+            stmt.setInt(1, id);
+            ResultSet rs = stmt.executeQuery();
+            if (rs.next()) {
+                return Optional.of(new Transaction(
+                    rs.getInt("transaction_id"),
+                    rs.getInt("user_id"),
+                    rs.getDate("transaction_date").toLocalDate(),
+                    rs.getDouble("amount"),
+                    rs.getString("category")
+                    //rs.getString("description"),
+                    //rs.getString("source")
+                ));
+            }
+        return Optional.empty();
+        }
     }
 
     @Override
-    public List<Transaction> findAll() throws Exception {
-        // TODO Auto-generated method stub
-        throw new UnsupportedOperationException("Unimplemented method 'findAll'");
+    public List<Transaction> findAll() throws SQLException {
+        String sql = "SELECT * FROM transactions";
+        return queryTransactions(sql);
     }
 
     @Override
     public void delete(Integer id) throws Exception {
-        // TODO Auto-generated method stub
-        throw new UnsupportedOperationException("Unimplemented method 'delete'");
+        String sql = "DELETE FROM transactions WHERE transaction_id = ?";
+        try (PreparedStatement stmt = connection.prepareStatement(sql)) {
+            stmt.setInt(1, id);
+            stmt.executeUpdate();
+        }
     }
 
     @Override
     public Transaction update(Transaction entity) throws Exception {
-        // TODO Auto-generated method stub
-        throw new UnsupportedOperationException("Unimplemented method 'update'");
+        String sql = "UPDATE transactions SET user_id = ?, amount = ?, category = ?, transaction_date = ? " +
+                 "WHERE transaction_id = ?";
+        try (PreparedStatement stmt = connection.prepareStatement(sql)) {
+            stmt.setInt(1, entity.getUserId());
+            stmt.setBigDecimal(2, BigDecimal.valueOf(entity.getAmount()));
+            stmt.setString(3, entity.getCategory());
+            stmt.setDate(4, Date.valueOf(entity.getDate()));
+            //stmt.setString(5, entity.getDescription());
+            //stmt.setString(6, transaction.getSource());
+            stmt.setInt(7, entity.getTransactionId());
+
+        stmt.executeUpdate();
+    }
+    return entity;
     }
 
     @Override
     public List<Transaction> findByDateRange(int userId, LocalDate startDate, LocalDate endDate) throws Exception {
-        // TODO Auto-generated method stub
-        throw new UnsupportedOperationException("Unimplemented method 'findByDateRange'");
+        String sql = "SELECT * FROM transactions WHERE user_id = ? AND transaction_date BETWEEN ? AND ?";
+        try (PreparedStatement stmt = connection.prepareStatement(sql)) {
+            stmt.setInt(1, userId);
+            stmt.setDate(2, Date.valueOf(startDate));
+            stmt.setDate(3, Date.valueOf(endDate));
+            return executeQuery(stmt);
+        }
     }
 }

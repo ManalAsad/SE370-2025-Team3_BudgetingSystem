@@ -173,7 +173,7 @@ public class TransactionsController implements Initializable {
             else {  //set up list
                 HBox container = new HBox(10);
                 Label dateLabel = new Label(transaction.getFormattedDate());
-                Label typeLabel = new Label(transaction.getTransactType());
+                Label typeLabel = new Label(transaction.getCategory());
                 Label amountLabel = new Label(transaction.getFormattedAmount());
 
                 container.getChildren().addAll(dateLabel, amountLabel, typeLabel);
