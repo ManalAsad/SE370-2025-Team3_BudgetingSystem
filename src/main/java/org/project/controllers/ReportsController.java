@@ -5,7 +5,9 @@ import javafx.collections.ObservableList;
 import javafx.fxml.FXML;
 import javafx.scene.chart.*;
 import javafx.scene.control.*;
+import javafx.scene.layout.BorderPane;
 import javafx.scene.layout.HBox;
+import javafx.util.Duration;
 import org.project.models.Transaction;
 import java.time.LocalDate;
 import java.io.*;
@@ -19,17 +21,111 @@ public class ReportsController {
     @FXML private ComboBox<String> month;
     @FXML private ComboBox<Integer> monthYear;
     @FXML private ComboBox<Integer> year;
-    @FXML private PieChart pieChart;
-    @FXML private BarChart<String, Number> barChart;
 
+    // Not sure if we can make use of this, since charts
+    // need actual data like Strings or Integers
     private ObservableList<Transaction> transactionData = FXCollections.observableArrayList();
+
+    @FXML
+    private BorderPane border;
+    private PieChart pieChart;
+    private ObservableList<PieChart.Data> chartData;
+
+    private BarChart<String, Number> barChart;
+    private CategoryAxis xAxis;
+    private NumberAxis yAxis;
+    private XYChart.Series<String, Number> series;
 
     @FXML
     public void initialize() {
         setupDateChoices();
         setupDateControls();
-        loadCsvData("src/main/resources/testBudget.csv"); //This is where I stored the example csv file. The format was '2023-01-05,1000,Bills'
-        generateReport();
+
+        // I did not call loadCsvData() because I am currently using
+        // hard-coded values for testing, will add use of csv file next
+        //loadCsvData("src/main/resources/testBudget.csv"); //This is where I stored the example csv file. The format was '2023-01-05,1000,Bills'
+        //generateReport();
+
+        initPieChart();
+        initBarChart();
+
+        // the pie chart and bar chart are displayed within a Border Pane
+        border.setCenter(pieChart);
+        border.setBottom(barChart);
+    }
+
+    private void initPieChart()
+    {
+        chartData = FXCollections.observableArrayList();
+
+        // using hard-coded values right now to make
+        // sure that the pie chart is displayed correctly
+        // Note: The integer values for the pie chart do not represent percentages
+        // They represent the category count. The count was computed from other
+        // code that will be added in the next iteration (reading data from a csv file)
+        chartData.add(new PieChart.Data("Restaurants & Dining", 36));
+        chartData.add(new PieChart.Data("Transportation", 9));
+        chartData.add(new PieChart.Data("Health", 4));
+        chartData.add(new PieChart.Data("Shopping & Entertainment", 3));
+        chartData.add(new PieChart.Data("Insurance", 3));
+        chartData.add(new PieChart.Data("Groceries", 4));
+
+        pieChart = new PieChart(chartData);
+
+        // adding Tooltips to pie chart
+        int percent;
+        int[] counts = { 36, 9, 4, 3, 3, 4 };
+        for (int i = 0; i < 6; ++i) {
+            percent = (int) (Math.round(((double) counts[i] / 59) * 100.0));
+            Tooltip tooltip = new Tooltip(percent + "%");
+            tooltip.setShowDelay(Duration.seconds(0));
+            Tooltip.install(pieChart.getData().get(i).getNode(), tooltip);
+        }
+
+        pieChart.setClockwise(true);
+        pieChart.setLabelLineLength(60);
+        pieChart.setLegendVisible(false);
+
+        pieChart.setPrefSize(400, 500);
+        pieChart.setMinHeight(500);
+    }
+
+    private void initBarChart()
+    {
+        // setting up the axes for the bar chart
+        xAxis = new CategoryAxis();
+        xAxis.setLabel("Month");
+
+        yAxis = new NumberAxis();
+        yAxis.setLabel("Average");
+
+        barChart = new BarChart<>(xAxis, yAxis);
+        series = new XYChart.Series<>();
+
+        // adding the data for the bar chart
+        // using hard-coded values right now to make
+        // sure that the bar chart is displayed correctly
+        // Note: The integer values for the bar chart are the average amount
+        // spent for a particular month. The averages were computed from other
+        // code that will be added in the next iteration (reading data from a csv file)
+        series.getData().add(new XYChart.Data<>("January", 84));
+        series.getData().add(new XYChart.Data<>("February", 107));
+        series.getData().add(new XYChart.Data<>("March", 58));
+        series.getData().add(new XYChart.Data<>("April", 52));
+        series.getData().add(new XYChart.Data<>("May", 126));
+        series.getData().add(new XYChart.Data<>("June", 117));
+        series.getData().add(new XYChart.Data<>("July", 90));
+        series.getData().add(new XYChart.Data<>("August", 93));
+        series.getData().add(new XYChart.Data<>("September", 117));
+        series.getData().add(new XYChart.Data<>("October", 74));
+        series.getData().add(new XYChart.Data<>("November", 103));
+        series.getData().add(new XYChart.Data<>("December", 68));
+
+        barChart.getData().add(series);
+        barChart.setLegendVisible(false);
+
+        barChart.setPrefSize(600, 300);
+        barChart.setMinHeight(300);
     }
 
     private void setupDateChoices() {
@@ -83,7 +179,7 @@ public class ReportsController {
                     yearSel.setManaged(true);
                     break;
             }
-            generateReport();
+            //generateReport();
         });
 
         // this adds listeners for dates (1 day)
@@ -93,7 +189,7 @@ public class ReportsController {
         weekStartDatePicker.valueProperty().addListener((obs, oldVal, newVal) -> {
             if (newVal != null) {
                 weekEndDatePicker.setValue(newVal.plusDays(6));
-                generateReport();
+                //generateReport();
             }
         });
 
@@ -135,6 +231,12 @@ public class ReportsController {
         }
     }
 
+    /* Not sure if we can make use of this function
+    *  Also not sure how anything with ObservableList<Transaction> can be used.
+    *  This is due to the fact that the charts need values like Strings and Integers
+    *  We will most likely need to use the ObservableList class, however, its declaration
+    *  will need to be modified
+    */
     @FXML
     private void generateReport() {
         String givenPeriodOfTime = timePeriod.getValue();   //get the value of a given period of time
@@ -142,7 +244,7 @@ public class ReportsController {
                 ? transactionData   //no filter if 'all'
                 : filterTransactions(getStartDate(givenPeriodOfTime), getEndDate(givenPeriodOfTime));   //pass start and end of dates for the filtering
 
-        updateCharts(filteredData, givenPeriodOfTime);
+        //updateCharts(filteredData, givenPeriodOfTime);
     }
 
     private LocalDate getStartDate(String givenPeriodOfTime) {  //return a given start day
@@ -176,8 +278,7 @@ public class ReportsController {
                 return LocalDate.now();
         }
     }
-
-
+    
     private ObservableList<Transaction> filterTransactions(LocalDate startDate, LocalDate endDate) {    //filter transactions based on the start and end weekly range
         return transactionData.filtered(t -> {
             LocalDate transactionDate = t.getDate();
@@ -186,12 +287,13 @@ public class ReportsController {
     }
 
     private void updateCharts(ObservableList<Transaction> transactions, String givenPeriodOfTime) { //chart update, ELSE STWTEMENTE NOT INCLUDED
-        pieChart.getData().clear();
-        barChart.getData().clear();
+
+        //pieChart.getData().clear();
+        //barChart.getData().clear();
 
         if (transactions.isEmpty()) {
-            pieChart.setTitle("No data here :( ");
-            barChart.setTitle("No data here also :( ");
+            //pieChart.setTitle("No data here :( ");
+            //barChart.setTitle("No data here also :( ");
             return;
         }
         updatePieChart(transactions);
@@ -201,14 +303,11 @@ public class ReportsController {
 //--------------------------This is where the magic happens!!!!!!!!!------------------------------------------------------------------------
     private void updatePieChart(ObservableList<Transaction> transactions) {
 
-        pieChart.setTitle("What you've spent");
     }
 
     private void updateBarChart(ObservableList<Transaction> transactions, String givenPeriodOfTime) {
-        barChart.setTitle("Also what you've spent");
+
     }
-
-
 
     private void showAlert(String title, String message) {
         Alert alert = new Alert(Alert.AlertType.ERROR);
