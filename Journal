@@ -80,6 +80,18 @@ We discussed the size of the graphs and which data is most important to keep in 
 some of our requirements and focused on the essential ones. We also talked about how the user interface should
 look and what tabs we need to include.
 
+# Dialy Scrum Meeting (4/10/2025)
+
+Team members present (In-Person):
+Joey Zamiski, Manal Asad, Tashneet and Mai Bridge
+
+Topics discussed:
+We discussed how reports are gonna generate with respect to user's transaction. figured out the sizing of the graphs.
+discussed what controllers we would need. discussed the overall structure and sequence of code. tested some mock data to see
+the data is stored in the database.
+
+
+
 
 
 
