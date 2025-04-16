@@ -1,184 +1,171 @@
 package org.project.controllers;
 
-import javafx.collections.FXCollections;
-import javafx.collections.ObservableList;
+import javafx.event.ActionEvent;
 import javafx.fxml.FXML;
+import javafx.fxml.FXMLLoader;
 import javafx.fxml.Initializable;
 import javafx.scene.control.*;
-import javafx.scene.layout.HBox;
-import javafx.stage.FileChooser;
-import org.project.models.Transaction;
-import java.io.File;
+import javafx.scene.layout.*;
+import javafx.stage.Stage;
+import org.project.util.SceneHelper;
+
+import java.io.IOException;
 import java.net.URL;
 import java.util.ResourceBundle;
 
-
 public class HomeController implements Initializable {
+    @FXML public BorderPane rootPane;
+    @FXML private VBox sidebar;
+    @FXML private VBox sidebarContent;
+    @FXML private StackPane contentPane;
+    @FXML private Button dashboardNavBtn;
+    @FXML private Button transactionsNavBtn;
+    @FXML private Button reportsNavBtn;
+    @FXML private VBox notificationSidebar;
 
-    @FXML private ListView<Transaction> transactionsListView;
-    @FXML private DatePicker dateField;
-    @FXML private TextField amountField;
-    @FXML private ComboBox<String> transactTypeField;
-    @FXML private TextField customtransactType;
-    @FXML private Button deleteSelectedBtn;
-    @FXML private Button processFileBtn;
-
-    private final ObservableList<Transaction> transactionData = FXCollections.observableArrayList();
-    private final ObservableList<String> categories = FXCollections.observableArrayList(    //dropdow menu list of categories
-            "Restaurants & Dining",
-            "Shopping",
-            "Health",
-            "Insurance",
-            "Transportation",
-            "Entertainment",
-            "Bills",
-            "Other"
-    );
+    private boolean sidebarExpanded = false;
+    private Stage stage;
 
     @Override
     public void initialize(URL url, ResourceBundle resourceBundle) {
-        transactTypeField.setItems(categories);
-        transactTypeField.getSelectionModel().selectFirst();
+        //init ubtton styles
+        dashboardNavBtn.getStyleClass().add("nav-button");
+        transactionsNavBtn.getStyleClass().add("nav-button");
+        reportsNavBtn.getStyleClass().add("nav-button");
 
-        //list for transactions
-        transactionsListView.setItems(transactionData);
-        transactionsListView.setCellFactory(param -> new TransactionList());
-        transactionsListView.getSelectionModel().setSelectionMode(SelectionMode.MULTIPLE);
-        transactionsListView.setPlaceholder(new Label("No transactions added yet :'("));
-
-        //hide the 'other' custom type
-        customtransactType.setVisible(false);
-        customtransactType.setManaged(false);
-
-        //selection updates the delete button
-        transactionsListView.getSelectionModel().selectedItemProperty().addListener((obs, oldVal, newVal) -> {
-            deleteSelectedBtn.setDisable(transactionsListView.getSelectionModel().getSelectedItems().isEmpty());
-        });
-
-        //display the custom field when 'other' is seleceted
-        transactTypeField.getSelectionModel().selectedItemProperty().addListener((obs, oldVal, newVal) -> {
-            boolean displayCustomType = "Other".equals(newVal);
-            customtransactType.setVisible(displayCustomType);
-            customtransactType.setManaged(displayCustomType);
-
-            if (displayCustomType) {
-                customtransactType.requestFocus();  //focus on box when selected
-            } else {
-                customtransactType.clear();
-            }
-        });
-
+        setActiveButton(dashboardNavBtn);
+        loadNotificationPanel();
     }
-
-    @FXML
-    private void handleAddTransaction() {       //add transactions, currently only manual
+    private void loadNotificationPanel() {  //load notifs, Might just leave in the dashboard though, it could get annoying
         try {
-            Transaction newTransaction = Transaction.submitManualTransaction(
-                    dateField.getValue(),
-                    amountField.getText(),
-                    transactTypeField.getValue(),
-                    customtransactType.getText()
-            );
+            FXMLLoader loader = new FXMLLoader(getClass().getResource("/fxml/notifications.fxml"));
+            VBox notificationPanel = loader.load();
+            notificationSidebar.getChildren().add(notificationPanel);
 
-            transactionData.add(newTransaction);
-            clearManualEntryFields();
-
-        } catch (IllegalArgumentException e) {
-            displayAlert("Invalid Input", e.getMessage());
+        } catch (IOException e) {
+            e.printStackTrace();
         }
     }
 
     @FXML
-    private void handleFileUpload() {       //FILECHOOSER moment :D!!
-        FileChooser fileChooser = new FileChooser();
-        fileChooser.setTitle("Select Transaction File");
-        fileChooser.getExtensionFilters().addAll(
-                new FileChooser.ExtensionFilter("All Files", "*.*"),
-                new FileChooser.ExtensionFilter("CSV Files", "*.csv"),
-                new FileChooser.ExtensionFilter("PDF Files", "*.pdf")
-        );
-
-        File selectedFile = fileChooser.showOpenDialog(transactionsListView.getScene().getWindow());    //opens up file thingy
-        if (selectedFile != null) {
-            processFileBtn.setDisable(true);
-        }
-    }
-
-    /*private List<Transaction> parseFile(File file) {
-        // Parsing logic goes here... i think, or maybe services
-    }*/
-
-    @FXML
-    private void handleDeleteSelected() {       //when click delete, either delete or no option selected
-        ObservableList<Transaction> selectedTransactions =
-                transactionsListView.getSelectionModel().getSelectedItems();
-
-        if (selectedTransactions.isEmpty()) {
-            displayAlert("No Selection", "Please select transactions to delete");
-            return;
-        }
-
-        Alert confirmation = new Alert(Alert.AlertType.CONFIRMATION);   //confirmation for user deletion
-        confirmation.setTitle("Confirm Deletion");
-        confirmation.setHeaderText("Delete " + selectedTransactions.size() + " transaction(s)?");
-        confirmation.setContentText("This action cannot be undone.");
-
-        confirmation.showAndWait().ifPresent(response -> {
-            if (response == ButtonType.OK) {
-                transactionData.removeAll(selectedTransactions);
-            }
-        });
+    private void openNotificationSidebar(ActionEvent event) {   //self explanatory
+        notificationSidebar.setVisible(!notificationSidebar.isVisible());
+        notificationSidebar.setManaged(notificationSidebar.isVisible());
     }
 
     @FXML
-    private void handleSaveChanges() {
-        if (!transactionData.isEmpty()) {
-            displayAlert("Save Successful!", "Your transactions have been saved (not really)");
+    private void openSidebar(ActionEvent event) { //self explanatory
+        sidebarExpanded = !sidebarExpanded;
+        sidebarContent.setVisible(sidebarExpanded);
+        sidebarContent.setManaged(sidebarExpanded);
+
+        if (sidebarExpanded) {
+            sidebar.setPrefWidth(200);
         } else {
-            displayAlert("No Data!", "There is nothing to save >:(!!");
+            sidebar.setPrefWidth(50);
         }
     }
 
     @FXML
-    private void handleClearFields() {
-        clearManualEntryFields();
+    private void showDashboard(ActionEvent event) {
+        loadContent("/fxml/dashboard.fxml");
+        setActiveButton(dashboardNavBtn);
+        collapseSidebarIfExpanded();
     }
 
-    private void clearManualEntryFields() {
-        dateField.setValue(null);
-        amountField.clear();
-        transactTypeField.getSelectionModel().selectFirst();
-        customtransactType.clear();
+    @FXML
+    private void showTransactions(ActionEvent event) {
+        loadContent("/fxml/transactions.fxml");
+        setActiveButton(transactionsNavBtn);
+        collapseSidebarIfExpanded();
     }
 
-    private void displayAlert(String title, String message) {
-        Alert alert = new Alert(Alert.AlertType.INFORMATION);
-        alert.setTitle(title);
+    @FXML
+    private void showReports(ActionEvent event) {
+        loadContent("/fxml/reports.fxml");
+        setActiveButton(reportsNavBtn);
+        collapseSidebarIfExpanded();
+    }
+
+    private void loadContent(String fxmlPath) { //load contents of home
+        try {
+            contentPane.getChildren().clear();
+            Pane newContent = FXMLLoader.load(getClass().getResource(fxmlPath));
+            contentPane.getChildren().add(newContent);
+        }
+        catch (Exception e) {
+            showAlert("Failed to load content: " + fxmlPath);
+            e.printStackTrace();
+        }
+    }
+
+    private void setActiveButton(Button activeButton) {
+        //essentially just removes class the button to reset
+        dashboardNavBtn.getStyleClass().remove("active-nav-button");
+        transactionsNavBtn.getStyleClass().remove("active-nav-button");
+        reportsNavBtn.getStyleClass().remove("active-nav-button");
+
+        //this is what styles the button
+        activeButton.getStyleClass().add("active-nav-button");
+    }
+
+    private void collapseSidebarIfExpanded() {
+        if (sidebarExpanded) {
+            openSidebar(null);
+        }
+    }
+
+    public void setStage(Stage stage) {     //min stage size in case u close fullscreen
+        this.stage = stage;
+        stage.setMinHeight(500);
+        stage.setMinWidth(700);
+    }
+
+    @FXML
+    private void handleLogout(ActionEvent event) {  //logs out ********Not sure if there is logic required to fully 'log out' a registered user *********
+        try {
+            stage.setFullScreen(false);
+            stage.close();
+            Stage newStage = new Stage();
+            SceneHelper.openLoginWindow(newStage);
+        }
+        catch (Exception e) {
+            e.printStackTrace();
+        }
+    }
+
+    @FXML
+    private void handleAbout() { //displays the 'about' window, no breaking full screen
+        try {
+            FXMLLoader loader = new FXMLLoader(getClass().getResource("/fxml/about.fxml"));
+            VBox aboutBox = loader.load();
+
+            Dialog<ButtonType> dialog = new Dialog<>();
+            dialog.setTitle("About");
+
+            dialog.getDialogPane().setContent(aboutBox);
+            dialog.getDialogPane().getButtonTypes().add(ButtonType.CLOSE);
+            dialog.getDialogPane().lookupButton(ButtonType.CLOSE).setVisible(false);
+            dialog.initOwner((Stage) rootPane.getScene().getWindow());
+            dialog.show();
+        }
+        catch (Exception e) {
+            showAlert("Failed to load About window!!!");
+        }
+    }
+
+    private void showAlert(String message) {
+        Alert alert = new Alert(Alert.AlertType.ERROR);
+        alert.setTitle("Error!");
         alert.setHeaderText(null);
         alert.setContentText(message);
-        alert.initOwner(transactionsListView.getScene().getWindow());
-        alert.show();
-    }
 
-    //list for display item, STILL UPDATING DONT MOVE THIS TO ANOTHER CLASS YET,
-    private static class TransactionList extends ListCell<Transaction> {
-        @Override
-        protected void updateItem(Transaction transaction, boolean empty) {
-            super.updateItem(transaction, empty);
-
-            if (empty || transaction == null) {
-                setText(null);
-                setGraphic(null);
-            }
-            else {  //set up list
-                HBox container = new HBox(10);
-                Label dateLabel = new Label(transaction.getFormattedDate());
-                Label typeLabel = new Label(transaction.getCategory());
-                Label amountLabel = new Label(transaction.getFormattedAmount());
-
-                container.getChildren().addAll(dateLabel, amountLabel, typeLabel);
-                setGraphic(container);
-            }
-        }
+        Stage currentStage = (Stage) rootPane.getScene().getWindow();
+        alert.initOwner(currentStage);
+        alert.setOnShowing(e -> {
+            Stage alertStage = (Stage) alert.getDialogPane().getScene().getWindow();
+            alertStage.setFullScreen(false);
+        });
+        alert.showAndWait();
     }
 }
