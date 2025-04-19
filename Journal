@@ -90,6 +90,41 @@ We discussed how reports are gonna generate with respect to user's transaction. 
 discussed what controllers we would need. discussed the overall structure and sequence of code. tested some mock data to see
 the data is stored in the database.
 
+# Dialy Scrum (4/15/2025)
+
+Team members present (In-Person):
+Joey Zamiski, Manal Asad, and Mai Bridge
+
+Topics discussed:
+We discussed how the components will interact with eachother. talked about package and class diagram for our system while focusing
+on different design patterns that can make our system efficient and easy to understand
+
+
+# Dialy Scrum (4/17/2025)
+
+Team members present (In-Person):
+Joey Zamiski, Manal Asad, and Mai Bridge
+
+Topics discussed:
+we talked about how classes should be organize to follow MVC, DAO and facade patterns. talked about the use of interface
+in our package diagram
+
+
+# Dialy Scrum (4/18/2025)
+
+Team members present (In-Person):
+Joey Zamiski, Manal Asad, and Mai Bridge
+
+Topics discussed:
+we discussed one of the functionality of our system, on how the user can set goals and encourage them to save money. dicussed
+different themes that we can build on the front end that could not only set goals for the user for a specific purpose but also
+encourages or motivates user to save money.different themes were presented: garden, retro and modern/minilist themes. agreed on the
+Garden theme. also discussed what main requirements need to be completed or are blocked that still need finishing by due date.
+working towards pending features.
+
+
+
+
 
 
 
