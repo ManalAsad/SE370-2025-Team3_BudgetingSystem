@@ -5,31 +5,30 @@ import java.time.LocalDate;
 import java.time.format.DateTimeFormatter;
 
 public class Transaction {
-    private final IntegerProperty transactionId;
-    private final IntegerProperty userId;
+    //private final IntegerProperty transactionId;
+    //private final IntegerProperty userId;
     private final DoubleProperty amount;
     private final StringProperty category;
     private final ObjectProperty<LocalDate> date;
 
-    private static final DateTimeFormatter DATE_FORMATTER =
-            DateTimeFormatter.ofPattern("MM/dd/yyyy");
+    private static final DateTimeFormatter DATE_FORMATTER = DateTimeFormatter.ofPattern("MM/dd/yyyy");
 
         //more property stuff
-    public Transaction(int transaction_id, int userId, LocalDate date, double amount, String category) {
+    public Transaction(LocalDate date, double amount, String category) {
         this.date = new SimpleObjectProperty<>(date);
         this.amount = new SimpleDoubleProperty(amount);
         this.category = new SimpleStringProperty(category);
-        this.transactionId = new SimpleIntegerProperty(transaction_id);
-        this.userId = new SimpleIntegerProperty(userId);
+        //this.transactionId = new SimpleIntegerProperty(transaction_id);
+        //this.userId = new SimpleIntegerProperty(userId);
     }
 
     //properties of category stuff
-    public IntegerProperty transactionIdProperty() { 
+    /*public IntegerProperty transactionIdProperty() { 
         return transactionId; 
     }
     public IntegerProperty userIdProperty() { 
         return userId; 
-    }
+    }*/
     public ObjectProperty<LocalDate> dateProperty() { 
         return date; 
     }
@@ -44,12 +43,12 @@ public class Transaction {
     public String getCategory() {
         return category.get();
     }
-    public int getUserId() { 
+    /*public int getUserId() { 
         return userId.get(); 
     }
     public int getTransactionId() { 
         return transactionId.get();
-    }
+    }*/
     public LocalDate getDate() { 
         return date.get(); 
     }
@@ -70,14 +69,15 @@ public class Transaction {
         this.category.set(category); 
     }
 
-    public void setTransactionId(int id) { 
+    /*public void setTransactionId(int id) { 
         this.transactionId.set(id); 
     }
     public void setUserId(int id) { 
       this.userId.set(id); 
-    }
+    }*/
 
     public static Transaction submitManualTransaction(                          //manual transaction data entry        
+            //int userId,
             LocalDate date,
             String amountTyped,
             String selectedType,
@@ -114,7 +114,7 @@ public class Transaction {
                 ? manualInput.trim()    //take the manual input in this case
                 : selectedType;     //otherwise use selected type
 
-        return new Transaction(0, userId, date, amount, category);
+        return new Transaction(date, amount, category);
     }
 
     public String getFormattedDate() {      //formats dates in table

@@ -5,7 +5,7 @@ import javafx.scene.Parent;
 import javafx.scene.Scene;
 import javafx.stage.Stage;
 import javafx.stage.StageStyle;
-import org.project.controllers.DashboardController;
+import org.project.controllers.HomeController;
 import org.project.controllers.LoginController;
 import java.io.IOException;
 
@@ -16,8 +16,8 @@ public class SceneHelper {
             Parent root = loader.load();
 
             Object controller = loader.getController();
-            if (controller instanceof DashboardController) {    //dashboard set
-                ((DashboardController) controller).setStage(stage);
+            if (controller instanceof HomeController) {    //dashboard set
+                ((HomeController) controller).setStage(stage);
             }
 
             //set the dashboard deets, opens as fullscreen

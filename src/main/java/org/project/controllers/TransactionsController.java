@@ -74,6 +74,7 @@ public class TransactionsController implements Initializable {
     private void handleAddTransaction() {       //add transactions, currently only manual
         try {
             Transaction newTransaction = Transaction.submitManualTransaction(
+                    //currentUserId,
                     dateField.getValue(),
                     amountField.getText(),
                     transactTypeField.getValue(),

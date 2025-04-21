@@ -6,7 +6,7 @@ public class User {
     private final IntegerProperty userId = new SimpleIntegerProperty();
     private final StringProperty username = new SimpleStringProperty();
     private final StringProperty email = new SimpleStringProperty();
-    private final StringProperty password = new SimpleStringProperty();
+    private final StringProperty password = new SimpleStringProperty(); // hashed in future
 
     // Constructors
     public User() {}

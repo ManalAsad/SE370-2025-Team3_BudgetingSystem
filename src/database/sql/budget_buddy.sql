@@ -39,6 +39,21 @@ create table budgets (
     foreign key(user_id) references users(user_id) on delete cascade
 ); /*stores the users budget limits per category/ represents how much a user plan to spend per category within a specific time period*/
 
+Create table notification (
+	id int auto_increment primary key,
+    user_id int not null,
+    category varchar(100),
+    message text,
+    timestamp datetime default current_timestamp,
+    is_read boolean default false,
+    foreign key (user_id) references users(user_id) on delete cascade
+); /* stores alerts per user
+track category
+include a message and timestamp
+mark if it's been read and delete alerts is the user is deleted*/
+
+
+
 /*create table goals (
 	goal_id int auto_increment primary key,
     user_id int,

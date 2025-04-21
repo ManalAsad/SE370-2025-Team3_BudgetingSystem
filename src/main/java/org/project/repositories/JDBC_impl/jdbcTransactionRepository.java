@@ -17,23 +17,23 @@ public class jdbcTransactionRepository implements TransactionRepository {
 
     @Override
     public Transaction save(Transaction transaction) throws SQLException {
-        String sql = "INSERT INTO transactions (user_id, amount, category, transaction_date) " + "VALUES (?, ?, ?, ?)";
+        String sql = "INSERT INTO transactions (amount, category, transaction_date) " + "VALUES (?, ?, ?)";
         
         try (PreparedStatement stmt = connection.prepareStatement(sql, Statement.RETURN_GENERATED_KEYS)) {
-            stmt.setInt(1, transaction.getUserId());
-            stmt.setBigDecimal(2, BigDecimal.valueOf(transaction.getAmount()));
-            stmt.setString(3, transaction.getCategory());
-            stmt.setDate(4, Date.valueOf(transaction.getDate()));
+            //stmt.setInt(1, transaction.getUserId());
+            stmt.setBigDecimal(1, BigDecimal.valueOf(transaction.getAmount()));
+            stmt.setString(2, transaction.getCategory());
+            stmt.setDate(3, Date.valueOf(transaction.getDate()));
             //stmt.setString(5, transaction.getDescription());
             //stmt.setString(6, transaction.getSource());
             
             stmt.executeUpdate();
             
-            try (ResultSet rs = stmt.getGeneratedKeys()) {
+            /*try (ResultSet rs = stmt.getGeneratedKeys()) {
                 if (rs.next()) {
                     transaction.setTransactionId(rs.getInt(1));
                 }
-            }
+            }*/
         }
         return transaction;
     }
@@ -71,7 +71,7 @@ public class jdbcTransactionRepository implements TransactionRepository {
             return rs.next() ? rs.getBigDecimal(1) : BigDecimal.ZERO;
         }
     }
-
+    
     private List<Transaction> queryTransactions(String sql, Object... params) throws SQLException {
         try (PreparedStatement stmt = connection.prepareStatement(sql)) {
             for (int i = 0; i < params.length; i++) {
@@ -87,8 +87,8 @@ public class jdbcTransactionRepository implements TransactionRepository {
         
         while (rs.next()) {
             transactions.add(new Transaction(
-                rs.getInt("transaction_id"),
-                rs.getInt("user_id"),
+                //rs.getInt("transaction_id"),
+                //rs.getInt("user_id"),
                 rs.getDate("transaction_date").toLocalDate(),
                 rs.getDouble("amount"),
                 rs.getString("category")
@@ -107,8 +107,8 @@ public class jdbcTransactionRepository implements TransactionRepository {
             ResultSet rs = stmt.executeQuery();
             if (rs.next()) {
                 return Optional.of(new Transaction(
-                    rs.getInt("transaction_id"),
-                    rs.getInt("user_id"),
+                    //rs.getInt("transaction_id"),
+                    //rs.getInt("user_id"),
                     rs.getDate("transaction_date").toLocalDate(),
                     rs.getDouble("amount"),
                     rs.getString("category")
@@ -137,16 +137,16 @@ public class jdbcTransactionRepository implements TransactionRepository {
 
     @Override
     public Transaction update(Transaction entity) throws Exception {
-        String sql = "UPDATE transactions SET user_id = ?, amount = ?, category = ?, transaction_date = ? " +
+        String sql = "UPDATE transactions SET amount = ?, category = ?, transaction_date = ? " +
                  "WHERE transaction_id = ?";
         try (PreparedStatement stmt = connection.prepareStatement(sql)) {
-            stmt.setInt(1, entity.getUserId());
-            stmt.setBigDecimal(2, BigDecimal.valueOf(entity.getAmount()));
-            stmt.setString(3, entity.getCategory());
-            stmt.setDate(4, Date.valueOf(entity.getDate()));
+            //stmt.setInt(1, entity.getUserId());
+            stmt.setBigDecimal(1, BigDecimal.valueOf(entity.getAmount()));
+            stmt.setString(2, entity.getCategory());
+            stmt.setDate(3, Date.valueOf(entity.getDate()));
             //stmt.setString(5, entity.getDescription());
             //stmt.setString(6, transaction.getSource());
-            stmt.setInt(7, entity.getTransactionId());
+            //stmt.setInt(5, entity.getTransactionId());
 
         stmt.executeUpdate();
     }

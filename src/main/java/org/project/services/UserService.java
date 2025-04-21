@@ -12,6 +12,7 @@ public class UserService {
     }
 
     public User registerUser(String username, String email, String password) throws Exception {
+
         if (userRepo.existsByEmail(email)) {
             throw new IllegalArgumentException("Email already registered");
         }

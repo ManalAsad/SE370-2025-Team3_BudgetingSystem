@@ -6,8 +6,8 @@
     "java.project.referencedLibraries": [
         "c:\\javafx-sdk-23.0.2\\lib\\javafx.base.jar",
         "c:\\javafx-sdk-23.0.2\\lib\\javafx.graphics.jar",
-        "c:\\budget_buddy\\lib\\mysql-connector-j-9.2.0.jar",
         "c:\\javafx-sdk-23.0.2\\lib\\javafx.swing.jar",
+        "c:\\budget_buddy (database)\\lib\\mysql-connector-j-9.2.0.jar",
         "c:\\javafx-sdk-23.0.2\\lib\\javafx-swt.jar",
         "c:\\javafx-sdk-23.0.2\\lib\\javafx.controls.jar",
         "c:\\javafx-sdk-23.0.2\\lib\\javafx.media.jar",

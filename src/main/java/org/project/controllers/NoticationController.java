@@ -2,7 +2,7 @@ package org.project.controllers;
 import javafx.fxml.FXML;
 import javafx.scene.layout.VBox;
 
-public class NotificationController {
+public class NoticationController {
     @FXML
     private VBox notificationContents;
 
