@@ -18,6 +18,7 @@ import java.io.IOException;
 import java.util.HashMap;
 
 import org.project.util.FileHandler;
+import org.project.util.ManualHandler;
 
 public class ReportsController {
     @FXML private ComboBox<String> timePeriod;
@@ -56,21 +57,33 @@ public class ReportsController {
         initDataCollection();
 
         String filePath;
-        FileHandler handler = new FileHandler();
+        FileHandler fileHandler = new FileHandler();
+        ManualHandler manualHandler = new ManualHandler();
+        Transaction transaction;
 
-        if (!handler.isEmpty()) {
-            for (int i = 0; i < handler.getSize(); ++i) {
-                filePath = handler.getFile(i);
+        if (!fileHandler.isEmpty()) {
+            for (int i = 0; i < fileHandler.getSize(); ++i) {
+                filePath = fileHandler.getFile(i);
                 if (!filePath.isEmpty()) {
                     countCategories(filePath);
                     computeTotalSpending(filePath);
                 }
             }
+        }
 
+        if (!manualHandler.isEmpty()) {
+            for (int i = 0; i < manualHandler.getSize(); ++i) {
+                transaction = manualHandler.getTransaction(i);
+                countCategories(transaction);
+                computeTotalSpending(transaction);
+            }
+        }
+
+        if (!fileHandler.isEmpty() || !manualHandler.isEmpty()) {
             initPieChart();
             initBarChart();
 
-            // the pie chart and bar chart are displayed within a Border Pane
+            // the pie chart and bar chart are displayed within a border pane
             border.setCenter(pieChart);
             border.setBottom(barChart);
         }
@@ -170,6 +183,7 @@ public class ReportsController {
 
     // sums up the total spending for each month
     // and stores it in the monthlySpending array
+    // this function is used when reading files
     public void computeTotalSpending(String filePath)
     {
         try {
@@ -194,6 +208,17 @@ public class ReportsController {
         }
     }
 
+    // this function is used for manual transactions
+    public void computeTotalSpending(Transaction transaction)
+    {
+        String date = transaction.getFormattedDate();
+        String month = getMonth(date, '/');
+
+        if (!month.isEmpty())
+            monthlySpending[Integer.parseInt(month) - 1] += transaction.getAmount();
+    }
+
+    // this function is used when reading files
     public void countCategories(String filePath)
     {
         try {
@@ -233,6 +258,34 @@ public class ReportsController {
         }
     }
 
+    // this function is used for manual transactions
+    public void countCategories(Transaction transaction)
+    {
+        total++;
+
+        String category = transaction.getTransactType();
+        switch (category) {
+            case "Restaurants & Dining":
+                counts[Categories.RESTAURANTS.ordinal()]++;
+                break;
+            case "Transportation":
+                counts[Categories.TRANSPORTATION.ordinal()]++;
+                break;
+            case "Health":
+                counts[Categories.HEALTH.ordinal()]++;
+                break;
+            case "Shopping & Entertainment":
+                counts[Categories.SHOPPING.ordinal()]++;
+                break;
+            case "Insurance":
+                counts[Categories.INSURANCE.ordinal()]++;
+                break;
+            case "Groceries":
+                counts[Categories.GROCERIES.ordinal()]++;
+                break;
+        }
+    }
+
     private String getMonth(String date, char delimiter)
     {
         int i = 0;
@@ -243,7 +296,7 @@ public class ReportsController {
             ++i;
         }
 
-        return month;
+        return (month.length() == 2 && month.charAt(0) == '0') ? month.charAt(1) + "" : month;
     }
 
     private void setupDateChoices() {
