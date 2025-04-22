@@ -12,6 +12,7 @@ import java.io.File;
 import java.net.URL;
 import java.util.ResourceBundle;
 
+import org.project.util.FileHandler;
 
 public class TransactionsController implements Initializable {
 
@@ -101,7 +102,9 @@ public class TransactionsController implements Initializable {
 
         File selectedFile = fileChooser.showOpenDialog(transactionsListView.getScene().getWindow());    //opens up file thingy
         if (selectedFile != null) {
-            processFileBtn.setDisable(true);
+            FileHandler handler = new FileHandler();
+            handler.addFile(selectedFile.getPath());
+            //processFileBtn.setDisable(true);
         }
     }
 
