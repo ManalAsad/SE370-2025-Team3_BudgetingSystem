@@ -10,9 +10,14 @@ import javafx.scene.layout.HBox;
 import javafx.util.Duration;
 import org.project.models.Transaction;
 import java.time.LocalDate;
-import java.io.*;
 import java.nio.file.Files;
 import java.nio.file.Paths;
+import java.io.BufferedReader;
+import java.io.FileReader;
+import java.io.IOException;
+import java.util.HashMap;
+
+import org.project.util.FileHandler;
 
 public class ReportsController {
     @FXML private ComboBox<String> timePeriod;
@@ -36,51 +41,83 @@ public class ReportsController {
     private NumberAxis yAxis;
     private XYChart.Series<String, Number> series;
 
+    private final int CATEGORIES = 6;
+    enum Categories { RESTAURANTS, TRANSPORTATION, HEALTH, SHOPPING, INSURANCE, GROCERIES };
+    private int[] counts;
+    private int total;
+
+    private final int MONTHS = 12;
+    private double[] monthlySpending;
+    private int[] daysInMonth = { 31, 28, 31, 30, 31, 30, 31, 31, 30, 31, 30, 31 };
+    private HashMap<Integer, String> map;
+
     @FXML
     public void initialize() {
+        initDataCollection();
+
+        String filePath;
+        FileHandler handler = new FileHandler();
+
+        if (!handler.isEmpty()) {
+            for (int i = 0; i < handler.getSize(); ++i) {
+                filePath = handler.getFile(i);
+                if (!filePath.isEmpty()) {
+                    countCategories(filePath);
+                    computeTotalSpending(filePath);
+                }
+            }
+
+            initPieChart();
+            initBarChart();
+
+            // the pie chart and bar chart are displayed within a Border Pane
+            border.setCenter(pieChart);
+            border.setBottom(barChart);
+        }
+
         setupDateChoices();
         setupDateControls();
+    }
 
-        // I did not call loadCsvData() because I am currently using
-        // hard-coded values for testing, will add use of csv file next
-        //loadCsvData("src/main/resources/testBudget.csv"); //This is where I stored the example csv file. The format was '2023-01-05,1000,Bills'
-        //generateReport();
+    private void initDataCollection()
+    {
+        total = 0;
+        counts = new int[CATEGORIES];
 
-        initPieChart();
-        initBarChart();
+        monthlySpending = new double[MONTHS];
+        map = new HashMap<>();
 
-        // the pie chart and bar chart are displayed within a Border Pane
-        border.setCenter(pieChart);
-        border.setBottom(barChart);
+        map.put(0, "January");
+        map.put(1, "February");
+        map.put(2, "March");
+        map.put(3, "April");
+        map.put(4, "May");
+        map.put(5, "June");
+        map.put(6, "July");
+        map.put(7, "August");
+        map.put(8, "September");
+        map.put(9, "October");
+        map.put(10, "November");
+        map.put(11, "December");
     }
 
     private void initPieChart()
     {
         chartData = FXCollections.observableArrayList();
 
-        // using hard-coded values right now to make
-        // sure that the pie chart is displayed correctly
+        // adding the data for the pie chart
         // Note: The integer values for the pie chart do not represent percentages
-        // They represent the category count. The count was computed from other
-        // code that will be added in the next iteration (reading data from a csv file)
-        chartData.add(new PieChart.Data("Restaurants & Dining", 36));
-        chartData.add(new PieChart.Data("Transportation", 9));
-        chartData.add(new PieChart.Data("Health", 4));
-        chartData.add(new PieChart.Data("Shopping & Entertainment", 3));
-        chartData.add(new PieChart.Data("Insurance", 3));
-        chartData.add(new PieChart.Data("Groceries", 4));
+        chartData.add(new PieChart.Data("Restaurants & Dining", counts[Categories.RESTAURANTS.ordinal()]));
+        chartData.add(new PieChart.Data("Transportation", counts[Categories.TRANSPORTATION.ordinal()]));
+        chartData.add(new PieChart.Data("Health", counts[Categories.HEALTH.ordinal()]));
+        chartData.add(new PieChart.Data("Shopping & Entertainment", counts[Categories.SHOPPING.ordinal()]));
+        chartData.add(new PieChart.Data("Insurance", counts[Categories.INSURANCE.ordinal()]));
+        chartData.add(new PieChart.Data("Groceries", counts[Categories.GROCERIES.ordinal()]));
 
         pieChart = new PieChart(chartData);
 
         // adding Tooltips to pie chart
-        int percent;
-        int[] counts = { 36, 9, 4, 3, 3, 4 };
-        for (int i = 0; i < 6; ++i) {
-            percent = (int) (Math.round(((double) counts[i] / 59) * 100.0));
-            Tooltip tooltip = new Tooltip(percent + "%");
-            tooltip.setShowDelay(Duration.seconds(0));
-            Tooltip.install(pieChart.getData().get(i).getNode(), tooltip);
-        }
+        setTooltips(pieChart);
 
         pieChart.setClockwise(true);
         pieChart.setLabelLineLength(60);
@@ -103,29 +140,110 @@ public class ReportsController {
         series = new XYChart.Series<>();
 
         // adding the data for the bar chart
-        // using hard-coded values right now to make
-        // sure that the bar chart is displayed correctly
-        // Note: The integer values for the bar chart are the average amount
-        // spent for a particular month. The averages were computed from other
-        // code that will be added in the next iteration (reading data from a csv file)
-        series.getData().add(new XYChart.Data<>("January", 84));
-        series.getData().add(new XYChart.Data<>("February", 107));
-        series.getData().add(new XYChart.Data<>("March", 58));
-        series.getData().add(new XYChart.Data<>("April", 52));
-        series.getData().add(new XYChart.Data<>("May", 126));
-        series.getData().add(new XYChart.Data<>("June", 117));
-        series.getData().add(new XYChart.Data<>("July", 90));
-        series.getData().add(new XYChart.Data<>("August", 93));
-        series.getData().add(new XYChart.Data<>("September", 117));
-        series.getData().add(new XYChart.Data<>("October", 74));
-        series.getData().add(new XYChart.Data<>("November", 103));
-        series.getData().add(new XYChart.Data<>("December", 68));
+        int average;
+        for (int i = 0; i < MONTHS; ++i) {
+            if (((int) monthlySpending[i]) == 0)
+                continue;
+
+            average = (int) (Math.round(monthlySpending[i] / (double) daysInMonth[i]));
+            series.getData().add(new XYChart.Data<>(map.get(i), average));
+        }
 
         barChart.getData().add(series);
         barChart.setLegendVisible(false);
 
         barChart.setPrefSize(600, 300);
         barChart.setMinHeight(300);
+    }
+
+    private void setTooltips(PieChart chart)
+    {
+        int percent;
+
+        for (int i = 0; i < CATEGORIES; ++i) {
+            percent = (int) (Math.round(((double) counts[i] / total) * 100.0));
+            Tooltip tooltip = new Tooltip(percent + "%");
+            tooltip.setShowDelay(Duration.seconds(0));
+            Tooltip.install(chart.getData().get(i).getNode(), tooltip);
+        }
+    }
+
+    // sums up the total spending for each month
+    // and stores it in the monthlySpending array
+    public void computeTotalSpending(String filePath)
+    {
+        try {
+            BufferedReader reader = new BufferedReader(new FileReader(filePath));
+            String line;
+            String[] values;
+
+            while ((line = reader.readLine()) != null) {
+                // split will split the csv file into tokens
+                // split returns a String array containing each token
+                values = line.split(",");
+
+                // the first column of the csv file holds the date
+                String date = values[0];
+                String month = getMonth(date, '/');
+                if (!month.isEmpty())
+                    monthlySpending[Integer.parseInt(month) - 1] += Double.parseDouble(values[2]);
+            }
+        }
+        catch (IOException e) {
+            System.err.println("File not found");
+        }
+    }
+
+    public void countCategories(String filePath)
+    {
+        try {
+            BufferedReader reader = new BufferedReader(new FileReader(filePath));
+            String line;
+            String[] values;
+
+            while ((line = reader.readLine()) != null) {
+                total++;
+                values = line.split(",");
+
+                String category = values[values.length - 1];
+                switch (category) {
+                    case "Restaurants & Dining":
+                        counts[Categories.RESTAURANTS.ordinal()]++;
+                        break;
+                    case "Transportation":
+                        counts[Categories.TRANSPORTATION.ordinal()]++;
+                        break;
+                    case "Health":
+                        counts[Categories.HEALTH.ordinal()]++;
+                        break;
+                    case "Shopping & Entertainment":
+                        counts[Categories.SHOPPING.ordinal()]++;
+                        break;
+                    case "Insurance":
+                        counts[Categories.INSURANCE.ordinal()]++;
+                        break;
+                    case "Groceries":
+                        counts[Categories.GROCERIES.ordinal()]++;
+                        break;
+                }
+            }
+        }
+        catch (IOException e) {
+            System.out.println("File not found");
+        }
+    }
+
+    private String getMonth(String date, char delimiter)
+    {
+        int i = 0;
+        String month = "";
+
+        while (date.charAt(i) != delimiter) {
+            month += date.charAt(i);
+            ++i;
+        }
+
+        return month;
     }
 
     private void setupDateChoices() {
@@ -278,7 +396,7 @@ public class ReportsController {
                 return LocalDate.now();
         }
     }
-    
+
     private ObservableList<Transaction> filterTransactions(LocalDate startDate, LocalDate endDate) {    //filter transactions based on the start and end weekly range
         return transactionData.filtered(t -> {
             LocalDate transactionDate = t.getDate();
