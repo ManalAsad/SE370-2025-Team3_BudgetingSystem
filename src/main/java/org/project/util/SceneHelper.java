@@ -34,7 +34,7 @@ public class SceneHelper {
         }
     }
 
-    public static void openLoginWindow(Stage stage) throws IOException { //moved login window opening logic to scene helper
+    public static void displayStartScreen(Stage stage) throws IOException { //moved login window opening logic to scene helper
         FXMLLoader loader = new FXMLLoader(SceneHelper.class.getResource("/fxml/login.fxml"));
         Parent root = loader.load();
         LoginController controller = loader.getController();
