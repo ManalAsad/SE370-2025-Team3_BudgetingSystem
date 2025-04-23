@@ -32,6 +32,8 @@ public class SceneHelper {
             System.err.println("Error loading FXML: " + fxmlPath);
             throw e;
         }
+        Image image = new Image("images/lilypiechart.png");
+        stage.getIcons().add(image);
     }
 
     public static void displayStartScreen(Stage stage) throws IOException { //moved login window opening logic to scene helper
@@ -45,6 +47,9 @@ public class SceneHelper {
         stage.initStyle(StageStyle.TRANSPARENT);
         stage.setScene(scene);
         stage.setTitle("Budget Buddy Login");
+
+        Image image = new Image("images/lilypiechart.png");
+        stage.getIcons().add(image);
 
         stage.show();
     }
