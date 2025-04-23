@@ -13,6 +13,7 @@ import java.net.URL;
 import java.util.ResourceBundle;
 
 import org.project.util.FileHandler;
+import org.project.util.ManualHandler;
 
 public class TransactionsController implements Initializable {
 
@@ -75,12 +76,14 @@ public class TransactionsController implements Initializable {
     private void handleAddTransaction() {       //add transactions, currently only manual
         try {
             Transaction newTransaction = Transaction.submitManualTransaction(
-                    //currentUserId,
                     dateField.getValue(),
                     amountField.getText(),
                     transactTypeField.getValue(),
                     customtransactType.getText()
             );
+
+            ManualHandler handler = new ManualHandler();
+            handler.addTransaction(newTransaction);
 
             transactionData.add(newTransaction);
             clearManualEntryFields();
@@ -177,7 +180,7 @@ public class TransactionsController implements Initializable {
             else {  //set up list
                 HBox container = new HBox(10);
                 Label dateLabel = new Label(transaction.getFormattedDate());
-                Label typeLabel = new Label(transaction.getCategory());
+                Label typeLabel = new Label(transaction.getTransactType());
                 Label amountLabel = new Label(transaction.getFormattedAmount());
 
                 container.getChildren().addAll(dateLabel, amountLabel, typeLabel);
