@@ -7,7 +7,7 @@ import org.project.util.SceneHelper;
 public class Main extends Application {
     @Override
     public void start(Stage primaryStage) throws Exception {
-        SceneHelper.openLoginWindow(primaryStage);
+        SceneHelper.displayStartScreen(primaryStage);
     }
 
     public static void main(String[] args) {
