@@ -47,6 +47,7 @@ public class StartScreenController implements Initializable {
             loginPage.setVisible(true);
             signUpPage.setVisible(false);
             startButtons.setVisible(false);
+            regretButton.setVisible(true);
         });
 
         //display sign up page, do the same thing
@@ -54,6 +55,7 @@ public class StartScreenController implements Initializable {
             signUpPage.setVisible(true);
             loginPage.setVisible(false);
             startButtons.setVisible(false);
+            regretButton.setVisible(true);
         });
 
         loginButton.setOnAction(e -> handleLogin(e));
