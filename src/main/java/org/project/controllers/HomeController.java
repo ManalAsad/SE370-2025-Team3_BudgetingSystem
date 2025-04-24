@@ -92,6 +92,13 @@ public class HomeController implements Initializable {
             contentPane.getChildren().clear();
             Pane newContent = FXMLLoader.load(getClass().getResource(fxmlPath));
             contentPane.getChildren().add(newContent);
+
+            if (fxmlPath.equals("/fxml/reports.fxml")) {    //allow scrolling for reports tab only
+                ScrollPane scrollPane = new ScrollPane(newContent);
+                scrollPane.setFitToWidth(true);
+                scrollPane.setHbarPolicy(ScrollPane.ScrollBarPolicy.NEVER);
+                contentPane.getChildren().add(scrollPane);
+            } 
         }
         catch (Exception e) {
             showAlert("Failed to load content: " + fxmlPath);
@@ -127,7 +134,7 @@ public class HomeController implements Initializable {
             stage.setFullScreen(false);
             stage.close();
             Stage newStage = new Stage();
-            SceneHelper.openLoginWindow(newStage);
+            SceneHelper.displayStartScreen(newStage);
         }
         catch (Exception e) {
             e.printStackTrace();
