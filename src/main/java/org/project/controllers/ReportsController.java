@@ -10,15 +10,13 @@ import javafx.scene.layout.HBox;
 import javafx.util.Duration;
 import org.project.models.Transaction;
 import java.time.LocalDate;
-import java.nio.file.Files;
-import java.nio.file.Paths;
-import java.io.BufferedReader;
-import java.io.FileReader;
-import java.io.IOException;
 import java.util.HashMap;
 
 import org.project.util.FileHandler;
 import org.project.util.ManualHandler;
+import org.project.util.AnalyticsHelper;
+import org.project.util.AnalyticsStorage;
+import org.project.util.AnalyticsHelper.Categories;
 
 public class ReportsController {
     @FXML private ComboBox<String> timePeriod;
@@ -43,13 +41,7 @@ public class ReportsController {
     private XYChart.Series<String, Number> series;
 
     private final int CATEGORIES = 6;
-    enum Categories { RESTAURANTS, TRANSPORTATION, HEALTH, SHOPPING, INSURANCE, GROCERIES };
-    private int[] counts;
-    private int total;
-
     private final int MONTHS = 12;
-    private double[] monthlySpending;
-    private int[] daysInMonth = { 31, 28, 31, 30, 31, 30, 31, 31, 30, 31, 30, 31 };
     private HashMap<Integer, String> map;
 
     @FXML
@@ -57,31 +49,45 @@ public class ReportsController {
         initDataCollection();
 
         String filePath;
+
+        AnalyticsHelper analyticsHelper = new AnalyticsHelper();
+        AnalyticsStorage storage = new AnalyticsStorage();
+
         FileHandler fileHandler = new FileHandler();
         ManualHandler manualHandler = new ManualHandler();
         Transaction transaction;
 
+        // checking if files were uploaded
         if (!fileHandler.isEmpty()) {
             for (int i = 0; i < fileHandler.getSize(); ++i) {
                 filePath = fileHandler.getFile(i);
                 if (!filePath.isEmpty()) {
-                    countCategories(filePath);
-                    computeTotalSpending(filePath);
+                    analyticsHelper.countCategories(filePath);
+                    analyticsHelper.computeTotalSpending(filePath);
+
+                    storage.updateTransactionTotal(analyticsHelper.getTotal());
+                    storage.updateCategoryCounts(analyticsHelper.getCategoryCounts());
+                    storage.updateMonthlySpending(analyticsHelper.getMonthlySpending());
                 }
             }
         }
 
+        // checking if manual transactions were added
         if (!manualHandler.isEmpty()) {
             for (int i = 0; i < manualHandler.getSize(); ++i) {
                 transaction = manualHandler.getTransaction(i);
-                countCategories(transaction);
-                computeTotalSpending(transaction);
+                analyticsHelper.countCategories(transaction);
+                analyticsHelper.computeTotalSpending(transaction);
+
+                storage.updateTransactionTotal(analyticsHelper.getTotal());
+                storage.updateCategoryCounts(analyticsHelper.getCategoryCounts());
+                storage.updateMonthlySpending(analyticsHelper.getMonthlySpending());
             }
         }
 
         if (!fileHandler.isEmpty() || !manualHandler.isEmpty()) {
-            initPieChart();
-            initBarChart();
+            initPieChart(analyticsHelper.getCategoryCounts(), analyticsHelper.getTotal());
+            initBarChart(analyticsHelper.getMonthlySpending(), analyticsHelper.getDaysInMonth());
 
             // the pie chart and bar chart are displayed within a border pane
             border.setCenter(pieChart);
@@ -94,10 +100,6 @@ public class ReportsController {
 
     private void initDataCollection()
     {
-        total = 0;
-        counts = new int[CATEGORIES];
-
-        monthlySpending = new double[MONTHS];
         map = new HashMap<>();
 
         map.put(0, "January");
@@ -114,7 +116,7 @@ public class ReportsController {
         map.put(11, "December");
     }
 
-    private void initPieChart()
+    private void initPieChart(int[] counts, int total)
     {
         chartData = FXCollections.observableArrayList();
 
@@ -130,7 +132,7 @@ public class ReportsController {
         pieChart = new PieChart(chartData);
 
         // adding Tooltips to pie chart
-        setTooltips(pieChart);
+        setTooltips(pieChart, counts, total);
 
         pieChart.setClockwise(true);
         pieChart.setLabelLineLength(60);
@@ -140,7 +142,7 @@ public class ReportsController {
         pieChart.setMinHeight(500);
     }
 
-    private void initBarChart()
+    private void initBarChart(double[] monthlySpending, int[] daysInMonth)
     {
         // setting up the axes for the bar chart
         xAxis = new CategoryAxis();
@@ -169,7 +171,7 @@ public class ReportsController {
         barChart.setMinHeight(300);
     }
 
-    private void setTooltips(PieChart chart)
+    private void setTooltips(PieChart chart, int[] counts, int total)
     {
         int percent;
 
@@ -179,124 +181,6 @@ public class ReportsController {
             tooltip.setShowDelay(Duration.seconds(0));
             Tooltip.install(chart.getData().get(i).getNode(), tooltip);
         }
-    }
-
-    // sums up the total spending for each month
-    // and stores it in the monthlySpending array
-    // this function is used when reading files
-    public void computeTotalSpending(String filePath)
-    {
-        try {
-            BufferedReader reader = new BufferedReader(new FileReader(filePath));
-            String line;
-            String[] values;
-
-            while ((line = reader.readLine()) != null) {
-                // split will split the csv file into tokens
-                // split returns a String array containing each token
-                values = line.split(",");
-
-                // the first column of the csv file holds the date
-                String date = values[0];
-                String month = getMonth(date, '/');
-                if (!month.isEmpty())
-                    monthlySpending[Integer.parseInt(month) - 1] += Double.parseDouble(values[2]);
-            }
-        }
-        catch (IOException e) {
-            System.err.println("File not found");
-        }
-    }
-
-    // this function is used for manual transactions
-    public void computeTotalSpending(Transaction transaction)
-    {
-        String date = transaction.getFormattedDate();
-        String month = getMonth(date, '/');
-
-        if (!month.isEmpty())
-            monthlySpending[Integer.parseInt(month) - 1] += transaction.getAmount();
-    }
-
-    // this function is used when reading files
-    public void countCategories(String filePath)
-    {
-        try {
-            BufferedReader reader = new BufferedReader(new FileReader(filePath));
-            String line;
-            String[] values;
-
-            while ((line = reader.readLine()) != null) {
-                total++;
-                values = line.split(",");
-
-                String category = values[values.length - 1];
-                switch (category) {
-                    case "Restaurants & Dining":
-                        counts[Categories.RESTAURANTS.ordinal()]++;
-                        break;
-                    case "Transportation":
-                        counts[Categories.TRANSPORTATION.ordinal()]++;
-                        break;
-                    case "Health":
-                        counts[Categories.HEALTH.ordinal()]++;
-                        break;
-                    case "Shopping & Entertainment":
-                        counts[Categories.SHOPPING.ordinal()]++;
-                        break;
-                    case "Insurance":
-                        counts[Categories.INSURANCE.ordinal()]++;
-                        break;
-                    case "Groceries":
-                        counts[Categories.GROCERIES.ordinal()]++;
-                        break;
-                }
-            }
-        }
-        catch (IOException e) {
-            System.out.println("File not found");
-        }
-    }
-
-    // this function is used for manual transactions
-    public void countCategories(Transaction transaction)
-    {
-        total++;
-
-        String category = transaction.getTransactType();
-        switch (category) {
-            case "Restaurants & Dining":
-                counts[Categories.RESTAURANTS.ordinal()]++;
-                break;
-            case "Transportation":
-                counts[Categories.TRANSPORTATION.ordinal()]++;
-                break;
-            case "Health":
-                counts[Categories.HEALTH.ordinal()]++;
-                break;
-            case "Shopping & Entertainment":
-                counts[Categories.SHOPPING.ordinal()]++;
-                break;
-            case "Insurance":
-                counts[Categories.INSURANCE.ordinal()]++;
-                break;
-            case "Groceries":
-                counts[Categories.GROCERIES.ordinal()]++;
-                break;
-        }
-    }
-
-    private String getMonth(String date, char delimiter)
-    {
-        int i = 0;
-        String month = "";
-
-        while (date.charAt(i) != delimiter) {
-            month += date.charAt(i);
-            ++i;
-        }
-
-        return (month.length() == 2 && month.charAt(0) == '0') ? month.charAt(1) + "" : month;
     }
 
     private void setupDateChoices() {
@@ -383,25 +267,6 @@ public class ReportsController {
         yearSel.setManaged(false);
     }
 
-    private void loadCsvData(String filePath) {
-        try {
-            Files.lines(Paths.get(filePath))    //read all lines from csv
-                    .map(line -> line.split(","))   //splits by ,
-                    .filter(columns -> columns.length >= 3) //each line has 3 columns
-                    .forEach(columns -> {
-                        try {
-                            transactionData.add(new Transaction(LocalDate.parse(columns[0].trim()), Double.parseDouble(columns[1].trim()), columns[2].trim())); //parse into format
-                        }
-                        catch (Exception e) {
-                            System.err.println("Skipping invalid line: " + String.join(",", columns));
-                        }
-                    });
-        }
-        catch (IOException e) {
-            showAlert("Error", "Couldn't load CSV: " + e.getMessage());
-        }
-    }
-
     /* Not sure if we can make use of this function
     *  Also not sure how anything with ObservableList<Transaction> can be used.
     *  This is due to the fact that the charts need values like Strings and Integers
@@ -456,7 +321,6 @@ public class ReportsController {
             return !transactionDate.isBefore(startDate) && !transactionDate.isAfter(endDate);
         });
     }
-
 
     private void showAlert(String title, String message) {
         Alert alert = new Alert(Alert.AlertType.ERROR);
