@@ -1,20 +1,32 @@
-<?xml version="1.0" encoding="UTF-8"?>
+<?import javafx.scene.layout.AnchorPane?>
+<?import javafx.scene.control.Button?>
+<?import javafx.scene.layout.VBox?>
+<?import javafx.scene.control.TextField?>
+<?import javafx.scene.control.Label?>
+<?import javafx.scene.control.DatePicker?>
+<?import javafx.scene.control.ComboBox?>
+<?import javafx.scene.layout.StackPane?>
 
-<?import javafx.geometry.*?>
-<?import javafx.scene.control.*?>
-<?import javafx.scene.layout.*?>
-<?import javafx.scene.text.*?>
+<StackPane xmlns="http://javafx.com/javafx/11.0.14-internal" xmlns:fx="http://javafx.com/fxml/1" fx:controller="org.project.controllers.DashboardController">
 
+    <AnchorPane>
+        <Label layoutX="50.0" layoutY="40.0" style="-fx-font-size: 30px;" text="Welcome, User!" />
 
-<VBox alignment="TOP_CENTER" spacing="20" xmlns="http://javafx.com/javafx/11.0.14-internal" xmlns:fx="http://javafx.com/fxml/1">
-    <padding>
-        <Insets top="40" right="40" bottom="40" left="40"/>
-    </padding>
+        <!--Right now I'm not sure where I should put this form. But it will move later-->
+        <VBox fx:id="goalForm" layoutX="50.0" layoutY="150.0" managed="false" spacing="10" visible="false">
+            <ComboBox fx:id="categoryPicker" promptText="Select Category" />
 
-    <!--placeholder for when we actually add stuff to dashboart-->
-    <Label text="Welcome to your dashboard, User!" style="-fx-text-fill: #2c3e50;">
-        <font>
-            <Font size="36"/>
-        </font>
-    </Label>
-</VBox>
+            <TextField fx:id="limitField" promptText="Spending Limit" />
+
+            <DatePicker fx:id="startDatePicker" />
+            <DatePicker fx:id="endDatePicker" />
+            
+            <Button onAction="#handleCreateGoal" text="Save Goal" />
+        </VBox>
+    </AnchorPane>
+
+<!-- the flowerpot will go just above this button -->
+    <VBox alignment="BOTTOM_CENTER" StackPane.alignment="BOTTOM_CENTER" spacing="10" style="-fx-padding: 30;">
+        <Button fx:id="setGoalButton" onAction="#openGoalForm" text="Set Goal" />
+    </VBox>
+</StackPane>
