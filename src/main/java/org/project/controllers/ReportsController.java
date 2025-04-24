@@ -457,28 +457,6 @@ public class ReportsController {
         });
     }
 
-    private void updateCharts(ObservableList<Transaction> transactions, String givenPeriodOfTime) { //chart update, ELSE STWTEMENTE NOT INCLUDED
-
-        //pieChart.getData().clear();
-        //barChart.getData().clear();
-
-        if (transactions.isEmpty()) {
-            //pieChart.setTitle("No data here :( ");
-            //barChart.setTitle("No data here also :( ");
-            return;
-        }
-        updatePieChart(transactions);
-        updateBarChart(transactions, givenPeriodOfTime);
-    }
-
-//--------------------------This is where the magic happens!!!!!!!!!------------------------------------------------------------------------
-    private void updatePieChart(ObservableList<Transaction> transactions) {
-
-    }
-
-    private void updateBarChart(ObservableList<Transaction> transactions, String givenPeriodOfTime) {
-
-    }
 
     private void showAlert(String title, String message) {
         Alert alert = new Alert(Alert.AlertType.ERROR);
