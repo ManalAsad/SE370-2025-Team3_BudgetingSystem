@@ -2,23 +2,60 @@
 
 <?import javafx.geometry.*?>
 <?import javafx.scene.control.*?>
+<?import javafx.scene.effect.*?>
+<?import javafx.scene.image.*?>
 <?import javafx.scene.layout.*?>
+<?import javafx.scene.paint.*?>
+<?import javafx.scene.shape.*?>
+<?import javafx.scene.text.*?>
 
 <AnchorPane fx:id="rootPane" maxHeight="-Infinity" maxWidth="-Infinity" minHeight="-Infinity" minWidth="-Infinity" prefHeight="500.0" prefWidth="300.0" style="-fx-background-radius: 10;" styleClass="root-pane" stylesheets="@/css/design.css" xmlns="http://javafx.com/javafx/11.0.14-internal" xmlns:fx="http://javafx.com/fxml/1" fx:controller="org.project.controllers.StartScreenController">
+
     <!--buttons in the Starting screen-->
-    <VBox fx:id="startButtons" alignment="BOTTOM_CENTER" layoutX="100.0" layoutY="387.0" spacing="15">
-        <Button fx:id="displayLoginPage" prefHeight="20.0" prefWidth="100.0" styleClass="choice-button" text="Sign In" />
-        <Button fx:id="displaySignUpPage" prefHeight="20.0" prefWidth="100.0" styleClass="choice-button" text="Create Account" />
+    <VBox fx:id="startButtons" alignment="BOTTOM_CENTER" layoutX="75.0" layoutY="387.0" spacing="15">
+        <Button fx:id="displayLoginPage" prefHeight="30.0" prefWidth="150.0" styleClass="login-button" text="Sign In" />
+        <Button fx:id="displaySignUpPage" prefHeight="30.0" prefWidth="150.0" styleClass="signup-button" text="Create Account" />
     </VBox>
+
+    <Pane fx:id="ripple1" layoutX="-33.0" layoutY="-14.0" prefHeight="231" prefWidth="231" />
+
+    <!--ensure centered ripple is in the same pane as lily-->
+    <StackPane layoutX="34.0" layoutY="115.0">
+        <Pane fx:id="rippleCentered" layoutX="34.0" layoutY="135.0" prefHeight="231" prefWidth="231" />
+        <Circle radius="105.0" stroke="BLACK" strokeType="INSIDE" strokeWidth="0.0"> <!--a cheap way to hide the inner ripple-->
+            <fill>
+                <LinearGradient endX="1.0" endY="1.0" startY="1.0">
+                    <stops>
+                        <Stop>
+                            <color>
+                                <Color red="0.4941176474094391" green="0.6392157077789307" blue="0.45490196347236633" />
+                            </color>
+                        </Stop>
+                        <Stop offset="1.0">
+                            <color>
+                                <Color red="0.4156862795352936" green="0.6117647290229797" blue="0.45490196347236633" />
+                            </color>
+                        </Stop>
+                    </stops>
+                </LinearGradient>
+            </fill>
+        </Circle>
+        <!--lilypiechart goes in front of ripple-->
+        <ImageView fx:id="lilyIcon" fitHeight="225" fitWidth="225.0">
+            <Image url="@/images/lilypiechart.png" />
+        </ImageView>
+
+    </StackPane>
 
     <!--Login page-->
     <VBox fx:id="loginPage" alignment="TOP_CENTER" prefHeight="${rootPane.prefHeight}" prefWidth="${rootPane.prefWidth}" spacing="10" style="-fx-background-color: transparent;" visible="false">
         <padding>
             <Insets top="200" />
         </padding>
+
         <TextField fx:id="username" maxHeight="20" maxWidth="150" promptText="Username" />
         <PasswordField fx:id="password" maxHeight="43" maxWidth="150" promptText="Password" />
-        <Button fx:id="loginButton" onAction="#handleLogin" text="Login" />
+        <Button fx:id="loginButton" maxHeight="22" maxWidth="100" onAction="#handleLogin" styleClass="login-button" text="Login" />
     </VBox>
 
     <!-- Sign Up Page -->
@@ -29,12 +66,35 @@
         <TextField fx:id="newUsername" maxHeight="20" maxWidth="150" promptText="New Username" />
         <PasswordField fx:id="newPassword" maxHeight="20" maxWidth="150" promptText="New Password" />
         <PasswordField fx:id="confirmNewPassword" maxHeight="20" maxWidth="150" promptText="Confirm Password" />
-        <Button fx:id="signUpButton" onAction="#handleSignUp" text="Sign Up" />
+        <Button fx:id="signUpButton" maxHeight="22" maxWidth="100" onAction="#handleSignUp" styleClass="signup-button" text="Sign Up" />
     </VBox>
 
     <!--for some reason I cant set the regret button to '<' -->
-    <Button fx:id="regretButton" layoutX="20" layoutY="20.0" onAction="#displayStartScreen" text="←" visible="false" />
+    <Button fx:id="regretButton" layoutX="7.0" layoutY="10.0" onAction="#displayStartScreen" styleClass="regret-button" text="←" visible="false" />
 
-    <Button fx:id="closeButton" layoutX="260.0" layoutY="20.0" onAction="#closeProgram" styleClass="close-button" text="X" />
+    <Button fx:id="closeButton" layoutX="260.0" layoutY="10.0" onAction="#closeProgram" styleClass="close-button" text="x" />
+
+    <Text fx:id="welcome" layoutX="100.0" layoutY="96.0" style="-fx-fill: #fffae2" text="Welcome">
+        <font>
+            <Font name="Cambria" size="25" />
+        </font>
+    </Text>
+
+    <StackPane layoutX="138.0" layoutY="150.0">
+        <Pane fx:id="ripple2" opacity="0.25" prefHeight="22.0" prefWidth="22.0" />
+
+        <ImageView fx:id="lotus" fitHeight="64.0" fitWidth="64.0" opacity="0.91">
+            <image>
+                <Image url="@/images/lotus.png" />
+            </image>
+            <effect>
+                <DropShadow color="#3b604a" offsetY="5" radius="6" />
+            </effect>
+        </ImageView>
+    </StackPane>
+
+    <padding>
+        <Insets top="100.0" />
+    </padding>
 
 </AnchorPane>

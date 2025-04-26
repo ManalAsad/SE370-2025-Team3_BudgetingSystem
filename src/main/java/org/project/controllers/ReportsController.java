@@ -268,11 +268,11 @@ public class ReportsController {
     }
 
     /* Not sure if we can make use of this function
-    *  Also not sure how anything with ObservableList<Transaction> can be used.
-    *  This is due to the fact that the charts need values like Strings and Integers
-    *  We will most likely need to use the ObservableList class, however, its declaration
-    *  will need to be modified
-    */
+     *  Also not sure how anything with ObservableList<Transaction> can be used.
+     *  This is due to the fact that the charts need values like Strings and Integers
+     *  We will most likely need to use the ObservableList class, however, its declaration
+     *  will need to be modified
+     */
     @FXML
     private void generateReport() {
         String givenPeriodOfTime = timePeriod.getValue();   //get the value of a given period of time

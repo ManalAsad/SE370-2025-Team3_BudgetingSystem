@@ -1,19 +1,25 @@
 package org.project.services;
 
-import org.project.models.Budget;
-import org.project.repositories.BudgetRepository;
+import org.project.models.*;
+import org.project.repositories.*;
+
+import java.sql.SQLException;
 import java.time.LocalDate;
+import java.time.LocalDateTime;
 import java.util.List;
 
 
-//uses BudgetRepsoitory to interact with the database.
 public class BudgetService {
     private final BudgetRepository budgetRepo;
+    private final TransactionRepository transactionRepo;
+    private final NotificationRepository notificationRepo;
 
-    public BudgetService(BudgetRepository budgetRepo) {
+    public BudgetService(BudgetRepository budgetRepo, TransactionRepository transactionRepo, NotificationRepository notificationRepo) {
         this.budgetRepo = budgetRepo;
+        this.transactionRepo = transactionRepo;
+        this.notificationRepo = notificationRepo;
     }
-    
+
 
     //validates input
     //creates a new budget
@@ -27,15 +33,9 @@ public class BudgetService {
         }
         if (startDate.isAfter(endDate)){
             throw new IllegalArgumentException("End date must be after start date");
-        } 
+        }
         if (category == null || category.trim().isEmpty()){
             throw new IllegalArgumentException("Category can not be null or empty.");
-        }
-
-
-        //checks for overlapping budgets
-        if(hasActiveBudgetForCategory(userId, category, startDate, endDate)){
-            throw new IllegalArgumentException("A budget for this category already exists in the given date range. ");
         }
 
 
@@ -43,23 +43,54 @@ public class BudgetService {
         return budgetRepo.save(budget);
     }
 
-
-    //fetches all budgets for a given user and delegates to BudgetRespository
-    public List<Budget> getUserBudgets(int userId) throws Exception {
-        return budgetRepo.findByUserId(userId);
+    public void checkBudgetLimits(int userId) throws Exception {
+            List<Budget> budgets = budgetRepo.findByUserId(userId);
+            LocalDate today = LocalDate.now();
+            for (Budget budget : budgets) {
+                if (isBudgetActive(budget, today)) {
+                    checkBudgetStatus(userId, budget, today);
+                }
+            }
     }
 
-    //fetches budgets active on the current date
-    public List<Budget> getActiveBudgets(int userId) throws Exception {
-        return budgetRepo.findActiveBudgets(userId, LocalDate.now(), LocalDate.now());
+
+
+
+    private boolean isBudgetActive(Budget budget, LocalDate date) {
+        return !date.isBefore(budget.getStartDate()) && !date.isAfter(budget.getEndDate());
     }
 
-    public List<Budget> getBudgetsByUserAndCategory(int userId, String category) throws Exception{
-        return budgetRepo.findByUserAndCategory(userId, category);
+    private void checkBudgetStatus(int userId, Budget budget, LocalDate today) throws Exception {
+        double totalSpent = calculateCategorySpending(userId, budget.getCategory(),
+                budget.getStartDate(), budget.getEndDate());
+        double budgetAmount = budget.getAmount();
+        double percentageUsed = totalSpent / budgetAmount;
+
+        if (percentageUsed >= 1.0) {
+            createNotification(userId,
+                    String.format("Budget exceeded for %s: $%.2f of $%.2f",
+                            budget.getCategory(), totalSpent, budgetAmount));
+        } else if (percentageUsed >= 0.9) {
+            createNotification(userId,
+                    String.format("Approaching budget limit for %s: %.0f%% used ($%.2f of $%.2f)",
+                            budget.getCategory(), percentageUsed * 100, totalSpent, budgetAmount));
+        }
     }
-    
-    //checks if the user already has an active budget for a given category on a specific date
-    public boolean hasActiveBudgetForCategory(int userId, String category, LocalDate startDate, LocalDate endDate) throws Exception {
-        return budgetRepo.exists(userId, category, startDate, endDate);
+
+    private double calculateCategorySpending(int userId, String category,
+                                             LocalDate startDate, LocalDate endDate) throws SQLException {
+        List<Transaction> transactions = transactionRepo.findByUserIdAndCategoryAndDateBetween(
+                userId, category, startDate, endDate);
+        return transactions.stream().mapToDouble(Transaction::getAmount).sum();
     }
+
+    private void createNotification(int userId, String message) throws Exception {
+        Notification notification = new Notification();
+        notification.setUserId(userId);
+        notification.setMessage(message);
+        notification.setTimestamp(LocalDateTime.now());
+        notification.setRead(false);
+        notificationRepo.save(notification);
+    }
+
 }

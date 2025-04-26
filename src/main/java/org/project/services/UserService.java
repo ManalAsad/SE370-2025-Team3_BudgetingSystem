@@ -16,7 +16,7 @@ public class UserService {
         if (userRepo.existsByEmail(email)) {
             throw new IllegalArgumentException("Email already registered");
         }
-        
+
         User newUser = new User(0, username, email, password);
         return userRepo.save(newUser);
     }

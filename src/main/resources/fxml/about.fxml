@@ -3,23 +3,20 @@
 <?import javafx.scene.control.*?>
 <?import javafx.scene.layout.*?>
 
-<VBox prefHeight="321.0" prefWidth="290.0" spacing="10" style="-fx-padding: 20; -fx-alignment: CENTER_LEFT;" stylesheets="@/css/design.css" xmlns="http://javafx.com/javafx/11.0.14-internal" xmlns:fx="http://javafx.com/fxml/1">
+<VBox prefHeight="290.0" prefWidth="433.0" spacing="10" style="-fx-padding: 20; -fx-alignment: CENTER_LEFT;" stylesheets="@/css/design.css" xmlns="http://javafx.com/javafx/11.0.14-internal" xmlns:fx="http://javafx.com/fxml/1">
 
     <Label style="-fx-font-size: 20; -fx-font-weight: bold;" text="BudgetBuddy" />
-    <Label text="Version 1.1.0" />
+    <Label text="Version 1.1.0" /> <!--idk what version type anymore)-->
     <Separator />
 
-    <!--Credits!!! -->
+    <!-- Credits!!! -->
     <Label style="-fx-font-weight: bold;" text="Developed by:" />
 
-    <VBox>
+    <VBox> <!--note that &#9; is tab and &#10; is \n ○○○○○○○○○○○○-->
         <Label text="- Manal Asad" />
-        <Label text="- Mai Bridge&#9;-&#9;UI/UX Designer" />
+        <Label text="- Mai Bridge&#9;○&#9;bridg040@csusm.edu&#9;○&#9;UI/UX Designer" />
         <Label text="- Tashneet Kaur" />
         <Label text="- Joey Zamiski" />
     </VBox>
 
-    <Separator />
-    <Label style="-fx-font-weight: bold;" text="Powered by:" />
-    <Label text="- JavaFX" />
 </VBox>

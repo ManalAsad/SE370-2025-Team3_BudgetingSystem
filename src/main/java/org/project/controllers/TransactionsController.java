@@ -37,6 +37,7 @@ public class TransactionsController implements Initializable {
             "Other"
     );
 
+
     @Override
     public void initialize(URL url, ResourceBundle resourceBundle) {
         transactTypeField.setItems(categories);
@@ -73,9 +74,13 @@ public class TransactionsController implements Initializable {
     }
 
     @FXML
-    private void handleAddTransaction() {       //add transactions, currently only manual
+    private int currentUserId;  //  managing logged-in users
+
+    public void handleAddTransaction() {       //add transactions, currently only manual
         try {
+
             Transaction newTransaction = Transaction.submitManualTransaction(
+                    currentUserId,
                     dateField.getValue(),
                     amountField.getText(),
                     transactTypeField.getValue(),
@@ -85,7 +90,6 @@ public class TransactionsController implements Initializable {
             ManualHandler handler = new ManualHandler();
             handler.addTransaction(newTransaction);
 
-            transactionData.add(newTransaction);
             clearManualEntryFields();
 
         } catch (IllegalArgumentException e) {
@@ -189,3 +193,4 @@ public class TransactionsController implements Initializable {
         }
     }
 }
+

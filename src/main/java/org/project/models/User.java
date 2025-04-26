@@ -10,7 +10,7 @@ public class User {
 
     // Constructors
     public User() {}
-    
+
     public User(int userId, String username, String email, String password) {
         this.userId.set(userId);
         this.username.set(username);

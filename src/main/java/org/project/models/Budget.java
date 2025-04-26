@@ -66,7 +66,7 @@ public class Budget {
     @Override
     public String toString() {
         return String.format("Budget[id=%d, user=%d, category=%s, amount=%.2f, period=%s to %s]",
-                getBudgetId(), getUserId(), getCategory(), getAmount(), 
+                getBudgetId(), getUserId(), getCategory(), getAmount(),
                 getStartDate(), getEndDate());
     }
 }

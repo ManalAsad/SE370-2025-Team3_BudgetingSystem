@@ -5,8 +5,9 @@ import javafx.scene.Parent;
 import javafx.scene.Scene;
 import javafx.stage.Stage;
 import javafx.stage.StageStyle;
+import javafx.scene.image.Image;
 import org.project.controllers.HomeController;
-import org.project.controllers.LoginController;
+import org.project.controllers.StartScreenController;
 import java.io.IOException;
 
 public class SceneHelper {
@@ -39,7 +40,7 @@ public class SceneHelper {
     public static void displayStartScreen(Stage stage) throws IOException { //moved login window opening logic to scene helper
         FXMLLoader loader = new FXMLLoader(SceneHelper.class.getResource("/fxml/login.fxml"));
         Parent root = loader.load();
-        LoginController controller = loader.getController();
+        StartScreenController controller = loader.getController();
         controller.setStage(stage);
 
         Scene scene = new Scene(root);  //set stage transparent, display scene

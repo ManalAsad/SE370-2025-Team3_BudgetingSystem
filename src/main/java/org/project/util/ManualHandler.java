@@ -12,6 +12,9 @@ public class ManualHandler
     {
         transactionData.add(transaction);
     }
+    public ObservableList<Transaction> getTransactionData() {
+        return transactionData;
+    }
 
     public Transaction getTransaction(int index)
     {

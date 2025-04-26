@@ -17,14 +17,14 @@ public class jdbcUserRepository implements UserRepository {
     @Override
     public User save(User user) throws SQLException {
         String sql = "INSERT INTO users (username, email, password) VALUES (?, ?, ?)";
-        
+
         try (PreparedStatement stmt = connection.prepareStatement(sql, Statement.RETURN_GENERATED_KEYS)) {
             stmt.setString(1, user.getUsername());
             stmt.setString(2, user.getEmail());
             stmt.setString(3, user.getPassword());
-            
+
             stmt.executeUpdate();
-            
+
             try (ResultSet rs = stmt.getGeneratedKeys()) {
                 if (rs.next()) {
                     user.setUserId(rs.getInt(1));
@@ -111,10 +111,10 @@ public class jdbcUserRepository implements UserRepository {
 
     private User mapUser(ResultSet rs) throws SQLException {
         return new User(
-            rs.getInt("user_id"),
-            rs.getString("username"),
-            rs.getString("email"),
-            rs.getString("password")
+                rs.getInt("user_id"),
+                rs.getString("username"),
+                rs.getString("email"),
+                rs.getString("password")
         );
     }
 

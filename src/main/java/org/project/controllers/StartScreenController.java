@@ -1,5 +1,11 @@
 package org.project.controllers;
 
+import javafx.animation.Animation;
+import javafx.animation.Interpolator;
+import javafx.animation.RotateTransition;
+import javafx.animation.TranslateTransition;
+import javafx.application.Platform;
+
 import javafx.event.ActionEvent;
 import javafx.fxml.FXML;
 import javafx.fxml.Initializable;
@@ -10,22 +16,37 @@ import javafx.scene.layout.VBox;
 import javafx.scene.layout.AnchorPane;
 import javafx.stage.Stage;
 import org.project.util.SceneHelper;
+import javafx.scene.image.ImageView;
+import javafx.scene.layout.Pane;
+import javafx.scene.text.Text;
+import javafx.stage.Stage;
+import javafx.util.Duration;
+import org.project.util.RippleAnimation;
+import org.project.util.SceneHelper;
 
 
 import java.net.URL;
 import java.util.ResourceBundle;
 
 public class StartScreenController implements Initializable {
-    @FXML private VBox startButtons;    //sign in and sign up buttons
+    @FXML private VBox startButtons;//sign in and sign up buttons
     @FXML private VBox loginPage;
     @FXML private VBox signUpPage;
     @FXML private Button regretButton;  //go back to start screen
     @FXML private AnchorPane rootPane;
+    @FXML private Text welcome;
 
     //fields for loggging in
     @FXML private TextField username;
     @FXML private PasswordField password;
     @FXML private Button loginButton;
+
+    //image + ripple animaitons
+    @FXML private ImageView lilyIcon;
+    @FXML private ImageView lotus;
+    @FXML private Pane ripple1;
+    @FXML private Pane ripple2;
+    @FXML private Pane rippleCentered;
 
     //fields for signing up
     @FXML private TextField newUsername;
@@ -43,11 +64,19 @@ public class StartScreenController implements Initializable {
     @Override
     public void initialize(URL url, ResourceBundle resourceBundle) {
         //display the login page, do not allow any other page to show
+        ripple1.setVisible(true);
+        rippleCentered.setVisible(true);
         displayLoginPage.setOnAction(e -> {
             loginPage.setVisible(true);
             signUpPage.setVisible(false);
             startButtons.setVisible(false);
             regretButton.setVisible(true);
+            lilyIcon.setVisible(false);
+            welcome.setVisible(false);
+            ripple1.setVisible(false);
+            ripple2.setVisible(false);
+            rippleCentered.setVisible(false);
+            lotus.setVisible(false);
         });
 
         //display sign up page, do the same thing
@@ -56,6 +85,12 @@ public class StartScreenController implements Initializable {
             loginPage.setVisible(false);
             startButtons.setVisible(false);
             regretButton.setVisible(true);
+            lilyIcon.setVisible(false);
+            welcome.setVisible(false);
+            ripple1.setVisible(false);
+            ripple2.setVisible(false);
+            rippleCentered.setVisible(false);
+            lotus.setVisible(false);
         });
 
         loginButton.setOnAction(e -> handleLogin(e));
@@ -73,13 +108,58 @@ public class StartScreenController implements Initializable {
             stage.setX(event.getScreenX() - xOffset);
             stage.setY(event.getScreenY() - yOffset);
         });
+        RippleAnimation.create(100, 100, 35, 58, Duration.seconds(5), ripple1);
+
+        //run later, ensures that this ripple animation is at the same pos as the lotus
+        Platform.runLater(() -> {
+            double centerX = lotus.getLayoutX() + lotus.getFitHeight() / 2;
+            double centerY = lotus.getLayoutY() + lotus.getFitHeight() / 2;
+
+            RippleAnimation.create(centerX, centerY, 25, 38, Duration.seconds(9), ripple2);
+        });
+
+        //load other content before running this task(ripple behind lilypad)
+        Platform.runLater(() -> {
+            double iconSize = lilyIcon.getFitHeight();
+            double centerX = rippleCentered.getHeight() / 2;
+            double centerY = rippleCentered.getWidth() / 2;
+
+            double initRad = iconSize * 0.4;
+            double finRad = iconSize * 0.56;
+
+            RippleAnimation.create(centerX, centerY, initRad, finRad, Duration.seconds(10), rippleCentered);
+        });
+
+        //make lotus look like it's bobbing up and down
+        TranslateTransition bobbingLotus = new TranslateTransition(Duration.seconds(3), lotus);
+        bobbingLotus.setByY(2);
+        bobbingLotus.setCycleCount(Animation.INDEFINITE);
+        bobbingLotus.setAutoReverse(true);
+        bobbingLotus.setInterpolator(Interpolator.EASE_BOTH);
+        bobbingLotus.play();
+
+        //rotate the lotus a little bit too :o
+        RotateTransition spinningLotus = new RotateTransition(Duration.seconds(8), lotus);
+        spinningLotus.setByAngle(6);
+        spinningLotus.setCycleCount(Animation.INDEFINITE);
+        spinningLotus.setAutoReverse(true);
+        spinningLotus.setInterpolator(Interpolator.EASE_BOTH);
+        spinningLotus.play();
     }
+
+
 
     public void displayStartScreen() {
         startButtons.setVisible(true);
         loginPage.setVisible(false);
         signUpPage.setVisible(false);
         regretButton.setVisible(false);
+        lilyIcon.setVisible(true);
+        welcome.setVisible(true);
+        ripple1.setVisible(true);
+        ripple2.setVisible(true);
+        rippleCentered.setVisible(true);
+        lotus.setVisible(true);
 
         clearFields(); //just put here for ease when clicking regret button
     }

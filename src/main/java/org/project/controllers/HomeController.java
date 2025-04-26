@@ -98,7 +98,7 @@ public class HomeController implements Initializable {
                 scrollPane.setFitToWidth(true);
                 scrollPane.setHbarPolicy(ScrollPane.ScrollBarPolicy.NEVER);
                 contentPane.getChildren().add(scrollPane);
-            } 
+            }
         }
         catch (Exception e) {
             showAlert("Failed to load content: " + fxmlPath);
@@ -176,3 +176,4 @@ public class HomeController implements Initializable {
         alert.showAndWait();
     }
 }
+
