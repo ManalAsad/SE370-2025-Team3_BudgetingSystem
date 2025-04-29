@@ -23,7 +23,7 @@ import javafx.stage.Stage;
 import javafx.util.Duration;
 import org.project.util.RippleAnimation;
 import org.project.util.SceneHelper;
-
+import org.project.services.UserAuthenticationService;
 
 import java.net.URL;
 import java.util.ResourceBundle;
@@ -36,12 +36,12 @@ public class StartScreenController implements Initializable {
     @FXML private AnchorPane rootPane;
     @FXML private Text welcome;
 
-    //fields for loggging in
+    //fields for logging in
     @FXML private TextField username;
     @FXML private PasswordField password;
     @FXML private Button loginButton;
 
-    //image + ripple animaitons
+    //image + ripple animations
     @FXML private ImageView lilyIcon;
     @FXML private ImageView lotus;
     @FXML private Pane ripple1;
@@ -147,8 +147,6 @@ public class StartScreenController implements Initializable {
         spinningLotus.play();
     }
 
-
-
     public void displayStartScreen() {
         startButtons.setVisible(true);
         loginPage.setVisible(false);
@@ -182,25 +180,48 @@ public class StartScreenController implements Initializable {
     }
 
     @FXML
-    private void handleLogin(ActionEvent event) {   //not the full login logic yet, all this does is switch scenes when clicking 'log in'
+    private void handleLogin(ActionEvent event) {
         try {
-            stage.close(); //close login then
-            //allow the switch from login window to dashboard
-            Stage dashboardStage = new Stage();
-            SceneHelper.switchScene(dashboardStage, "/fxml/home.fxml",
-                    "BudgetBuddy Dashboard", true);
+            UserAuthenticationService authService = new UserAuthenticationService();
+
+            if (authService.authenticate(username.getText(), password.getText())) {
+                stage.close(); // close login
+                Stage dashboardStage = new Stage(); // allow the switch from login window to dashboard
+                SceneHelper.switchScene(dashboardStage, "/fxml/home.fxml",
+                        "BudgetBuddy Dashboard", true);
+            }
+            else {
+                // display an alert or text indicating
+                // that login was unsuccessful
+            }
         }
         catch (Exception e) {
             e.printStackTrace();
         }
     }
-    @FXML   //just like the login handling, it doesnt do anything yet
+
+    @FXML
     private void handleSignUp(ActionEvent event) {
         try {
-            stage.close();
-            Stage dashboardStage = new Stage();
-            SceneHelper.switchScene(dashboardStage, "/fxml/home.fxml",
-                    "BudgetBuddy Dashboard", true);
+            if (newPassword.getText().equals(confirmNewPassword.getText())) {
+                UserAuthenticationService authService = new UserAuthenticationService();
+
+                if (authService.createAccount(newUsername.getText(), newPassword.getText())) {
+                    // account creation was successful, display dashboard
+                    stage.close();
+                    Stage dashboardStage = new Stage();
+                    SceneHelper.switchScene(dashboardStage, "/fxml/home.fxml",
+                            "BudgetBuddy Dashboard", true);
+                }
+                else {
+                    // display an alert or text indicating
+                    // that a new account could not be created
+                }
+            }
+            else {
+                // display an alert or text indicating
+                // that passwords entered do not match
+            }
         }
         catch (Exception e) {
             e.printStackTrace();
