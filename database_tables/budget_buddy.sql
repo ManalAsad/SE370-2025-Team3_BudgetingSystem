@@ -1,7 +1,7 @@
 
 #stores user login details 
 create table users (
-	  user_id int auto_increment,
+    user_id int auto_increment,
     username varchar(100) not null,
     email varchar(100) unique,
     hash varchar(64) not null,
@@ -11,7 +11,7 @@ create table users (
 
 #stores transactions uploaded by users
 create table transactions (
-	  transaction_id int auto_increment primary key,
+    transaction_id int auto_increment primary key,
     user_id int,
     amount decimal(10,2) not null,
     category varchar(50) not null,
@@ -25,7 +25,7 @@ create table transactions (
 #represents how much a user plan to spend per category within a specific time period
 
 create table budgets (
-	  budget_id int auto_increment primary key,
+    budget_id int auto_increment primary key,
     user_id int,
     category varchar(50) not null,
     amount decimal(10,2) not null,
@@ -35,7 +35,7 @@ create table budgets (
 ); 
 
 create table notifications (
-	  notification_id int primary key auto_increment,
+    notification_id int primary key auto_increment,
     user_id int not null,
     message varchar(255) not null,
     timestamp datetime default current_timestamp,
