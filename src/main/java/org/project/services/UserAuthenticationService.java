@@ -22,9 +22,6 @@ public class UserAuthenticationService
             Connection connection = DatabaseConnection.getConnection();
             PreparedStatement statement;
 
-            // NOTE: this line is just for testing, delete after testing is done
-            System.out.println("Database connection successful!");
-
             salt = generateSalt();
             hash = generateHash(salt + password);
 
@@ -61,9 +58,6 @@ public class UserAuthenticationService
             Connection connection = DatabaseConnection.getConnection();
             PreparedStatement statement;
             ResultSet resultSet;
-
-            // NOTE: this line is just for testing, delete after testing is done
-            System.out.println("Database connection successful!");
 
             sql = "SELECT * FROM users WHERE username=?";
 
