@@ -33,4 +33,6 @@ public class ManualHandler
     {
         return transactionData.size();
     }
+
+    public void clear() { transactionData.clear(); }
 }
