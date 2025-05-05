@@ -3,7 +3,7 @@ package org.project.models;
 import javafx.beans.property.*;
 
 public class User {
-    private final IntegerProperty userId = new SimpleIntegerProperty();
+    private static final IntegerProperty userId = new SimpleIntegerProperty();
     private final StringProperty username = new SimpleStringProperty();
     private final StringProperty email = new SimpleStringProperty();
     private final StringProperty password = new SimpleStringProperty(); // hashed in future
@@ -12,7 +12,7 @@ public class User {
     public User() {}
 
     public User(int userId, String username, String email, String password) {
-        this.userId.set(userId);
+        User.userId.set(userId);
         this.username.set(username);
         this.email.set(email);
         this.password.set(password);
