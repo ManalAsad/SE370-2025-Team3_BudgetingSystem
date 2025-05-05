@@ -15,8 +15,15 @@ import java.util.HashMap;
 import org.project.util.FileHandler;
 import org.project.util.ManualHandler;
 import org.project.util.AnalyticsHelper;
-import org.project.util.AnalyticsStorage;
 import org.project.util.AnalyticsHelper.Categories;
+import org.project.util.RecentYear;
+import org.project.models.User;
+import org.project.database.DatabaseConnection;
+
+import java.sql.Connection;
+import java.sql.PreparedStatement;
+import java.sql.ResultSet;
+import java.sql.SQLException;
 
 public class ReportsController {
     @FXML private ComboBox<String> timePeriod;
@@ -50,9 +57,8 @@ public class ReportsController {
 
         String filePath;
 
+        User user = new User();
         AnalyticsHelper analyticsHelper = new AnalyticsHelper();
-        AnalyticsStorage storage = new AnalyticsStorage();
-
         FileHandler fileHandler = new FileHandler();
         ManualHandler manualHandler = new ManualHandler();
         Transaction transaction;
@@ -62,36 +68,32 @@ public class ReportsController {
             for (int i = 0; i < fileHandler.getSize(); ++i) {
                 filePath = fileHandler.getFile(i);
                 if (!filePath.isEmpty()) {
-                    analyticsHelper.countCategories(filePath);
-                    analyticsHelper.computeTotalSpending(filePath);
-
-                    storage.updateTransactionTotal(analyticsHelper.getTotal());
-                    storage.updateCategoryCounts(analyticsHelper.getCategoryCounts());
-                    storage.updateMonthlySpending(analyticsHelper.getMonthlySpending());
+                    analyticsHelper.computeAnalytics(filePath, user.getUserId());
                 }
             }
+            fileHandler.clear();
         }
 
         // checking if manual transactions were added
         if (!manualHandler.isEmpty()) {
             for (int i = 0; i < manualHandler.getSize(); ++i) {
                 transaction = manualHandler.getTransaction(i);
-                analyticsHelper.countCategories(transaction);
-                analyticsHelper.computeTotalSpending(transaction);
-
-                storage.updateTransactionTotal(analyticsHelper.getTotal());
-                storage.updateCategoryCounts(analyticsHelper.getCategoryCounts());
-                storage.updateMonthlySpending(analyticsHelper.getMonthlySpending());
+                analyticsHelper.computeAnalytics(transaction, user.getUserId());
             }
+            manualHandler.clear();
         }
 
-        if (!fileHandler.isEmpty() || !manualHandler.isEmpty()) {
-            initPieChart(analyticsHelper.getCategoryCounts(), analyticsHelper.getTotal());
-            initBarChart(analyticsHelper.getMonthlySpending(), analyticsHelper.getDaysInMonth());
+        RecentYear recentYear = new RecentYear();
+        String mostRecentYear = recentYear.getMostRecentYear();
+        if (!mostRecentYear.isEmpty()) {
+            if (analyticsHelper.hasKey(mostRecentYear)) {
+                initPieChart(analyticsHelper.getCategoryCounts(mostRecentYear), analyticsHelper.getTotal(mostRecentYear));
+                initBarChart(analyticsHelper.getMonthlySpending(mostRecentYear), analyticsHelper.getDaysInMonth());
 
-            // the pie chart and bar chart are displayed within a border pane
-            border.setCenter(pieChart);
-            border.setBottom(barChart);
+                // the pie chart and bar chart are displayed within a border pane
+                border.setCenter(pieChart);
+                border.setBottom(barChart);
+            }
         }
 
         setupDateChoices();
@@ -185,7 +187,7 @@ public class ReportsController {
 
     private void setupDateChoices() {
         timePeriod.setItems(FXCollections.observableArrayList(     //time givenPeriodOfTime selection
-                "All", "Day", "Week", "Month", "Year"
+                "All", "Year"
         ));
 
         month.setItems(FXCollections.observableArrayList(      //month selection
@@ -217,18 +219,6 @@ public class ReportsController {
         timePeriod.valueProperty().addListener((obs, oldVal, newVal) -> {
             hideControls();
             switch (newVal) {
-                case "Day":
-                    daySel.setVisible(true);
-                    daySel.setManaged(true);
-                    break;
-                case "Week":
-                    weekSel.setVisible(true);
-                    weekSel.setManaged(true);
-                    break;
-                case "Month":
-                    monthSel.setVisible(true);
-                    monthSel.setManaged(true);
-                    break;
                 case "Year":
                     yearSel.setVisible(true);
                     yearSel.setManaged(true);
@@ -237,23 +227,65 @@ public class ReportsController {
             //generateReport();
         });
 
-        // this adds listeners for dates (1 day)
-        dayDatePicker.valueProperty().addListener((obs, oldVal, newVal) -> generateReport());
-
-        //adds listener for dates (1 week)
-        weekStartDatePicker.valueProperty().addListener((obs, oldVal, newVal) -> {
-            if (newVal != null) {
-                weekEndDatePicker.setValue(newVal.plusDays(6));
-                //generateReport();
-            }
-        });
-
-        //month and year listener
-        month.valueProperty().addListener((obs, oldVal, newVal) -> generateReport());
-        monthYear.valueProperty().addListener((obs, oldVal, newVal) -> generateReport());
-
         //year listener
-        year.valueProperty().addListener((obs, oldVal, newVal) -> generateReport());
+        year.valueProperty().addListener((obs, oldVal, newVal) -> {
+            year.setVisible(true);
+
+            AnalyticsHelper helper = new AnalyticsHelper();
+            RecentYear mostRecentYear = new RecentYear();
+            User user = new User();
+
+            try {
+                Connection connection = DatabaseConnection.getConnection();
+                PreparedStatement statement;
+                ResultSet resultSet;
+                String sql;
+
+                sql = "SELECT * FROM transactions WHERE user_id=? AND transaction_date LIKE ?";
+
+                statement = connection.prepareStatement(sql);
+
+                statement.setInt(1, user.getUserId());
+                statement.setString(2, newVal + "%");
+                resultSet = statement.executeQuery();
+
+                if (helper.hasKey(newVal + "")) {
+                    initPieChart(helper.getCategoryCounts(newVal + ""), helper.getTotal(newVal + ""));
+                    initBarChart(helper.getMonthlySpending(newVal + ""), helper.getDaysInMonth());
+
+                    border.setCenter(pieChart);
+                    border.setBottom(barChart);
+
+                    mostRecentYear.setMostRecentYear(newVal + "");
+                }
+                else if (resultSet.isBeforeFirst()) {
+                    AnalyticsHelper analyticsHelper = new AnalyticsHelper();
+                    while (resultSet.next()) {
+                        String[] split_date = (resultSet.getDate("transaction_date") + "").split("-");
+                        String date = split_date[1] + "/" + split_date[2] + "/" + split_date[0];
+
+                        analyticsHelper.computeAnalytics(resultSet.getDouble("amount"), resultSet.getString("category"), date);
+                    }
+
+                    initPieChart(analyticsHelper.getCategoryCounts(newVal + ""), analyticsHelper.getTotal(newVal + ""));
+                    initBarChart(analyticsHelper.getMonthlySpending(newVal + ""), analyticsHelper.getDaysInMonth());
+
+                    border.setCenter(pieChart);
+                    border.setBottom(barChart);
+
+                    mostRecentYear.setMostRecentYear(newVal + "");
+                }
+
+                statement.close();
+                resultSet.close();
+                connection.close();
+            }
+            catch (SQLException e) {
+                e.printStackTrace();
+            }
+
+            yearSel.setManaged(true);
+        });
     }
 
     private void hideControls() {   //hide for looks
