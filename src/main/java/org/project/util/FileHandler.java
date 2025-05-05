@@ -28,4 +28,9 @@ public class FileHandler
     {
         return uploadedFiles.size();
     }
+
+    public void clear()
+    {
+        uploadedFiles.clear();
+    }
 }
