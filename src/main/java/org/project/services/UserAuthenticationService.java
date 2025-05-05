@@ -11,6 +11,7 @@ import java.util.HexFormat;
 import java.util.Random;
 
 import org.project.database.DatabaseConnection;
+import org.project.models.User;
 
 public class UserAuthenticationService
 {
@@ -21,6 +22,9 @@ public class UserAuthenticationService
             String salt, hash, sql;
             Connection connection = DatabaseConnection.getConnection();
             PreparedStatement statement;
+
+            // NOTE: this line is just for testing, delete after testing is done
+            System.out.println("Database connection successful!");
 
             salt = generateSalt();
             hash = generateHash(salt + password);
@@ -52,12 +56,16 @@ public class UserAuthenticationService
     {
         boolean success;
         try {
+            int user_id = 0;
             String sql;
             String salt = "";
             String hash = "";
             Connection connection = DatabaseConnection.getConnection();
             PreparedStatement statement;
             ResultSet resultSet;
+
+            // NOTE: this line is just for testing, delete after testing is done
+            System.out.println("Database connection successful!");
 
             sql = "SELECT * FROM users WHERE username=?";
 
@@ -72,6 +80,7 @@ public class UserAuthenticationService
                 // is unique, so there should only be one row
                 // returned in this case
                 while (resultSet.next()) {
+                    user_id = resultSet.getInt("user_id");
                     salt = resultSet.getString("salt");
                     hash = resultSet.getString("hash");
                 }
@@ -79,6 +88,9 @@ public class UserAuthenticationService
                 if (generateHash(salt + password).equals(hash)) {
                     // user entered the correct password
                     success = true;
+
+                    User user = new User();
+                    user.setUserId(user_id);
                 }
                 else {
                     // password was invalid
