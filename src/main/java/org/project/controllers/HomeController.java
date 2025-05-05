@@ -8,6 +8,7 @@ import javafx.scene.control.*;
 import javafx.scene.layout.*;
 import javafx.stage.Stage;
 import org.project.util.SceneHelper;
+import org.project.util.AnalyticsHelper;
 
 import java.io.IOException;
 import java.net.URL;
@@ -131,6 +132,9 @@ public class HomeController implements Initializable {
     @FXML
     private void handleLogout(ActionEvent event) {  //logs out ********Not sure if there is logic required to fully 'log out' a registered user *********
         try {
+            AnalyticsHelper analyticsHelper = new AnalyticsHelper();
+            analyticsHelper.clear();
+
             stage.setFullScreen(false);
             stage.close();
             Stage newStage = new Stage();
